@@ -39,22 +39,23 @@ PDE + PDL can efficiently represent the following data types and structures:
 
 Here is how that compares to some of the data formats listed above:
 
-| Data Type            | PDL + PDE | JSON  |
-|----------------------|-----------|-------|
-| Boolean              | +         | +     |
-| Integer              | +         | +     |
-| Float                | +         | +     |
-| ASCII                | +         | + (*) |
-| UTF-8                | +         | +     |
-| UTC                  | +         |       |
-| Bytes                | +         | (+)   |
-| Object               | +         | +     |
-| Table                | +         |       |
-| Tree                 | +         | +     |
-| Object Graphs        | +         | +     |
-| Cyclic Object Graphs | +         |       |
-| Metadata             | +         |       |
-| Comments             | +         |       |
+| Data Type            | PDL + PDE | CSV | JSON  |
+|----------------------|-----------|-----|-------|
+| Boolean              | +         | +   | +     |
+| Integer              | +         | +   | +     | 
+| Float                | +         | +   | +     | 
+| ASCII                | +         | +   | + (*) |
+| UTF-8                | +         | +   | +     |
+| UTC                  | +         | (+) |       |
+| Bytes                | +         | (+) | (+)   |
+| Object               | +         |     | +     |
+| Array                | +         |     | +     |
+| Table                | +         | +   |       |
+| Tree                 | +         |     | + (*) |
+| Object Graphs        | +         | +   | +     |
+| Cyclic Object Graphs | +         |     |       | 
+| Metadata             | +         |     |       |
+| Comments             | +         |     |       |
 
 Notes:
 
