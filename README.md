@@ -63,6 +63,14 @@ JSON can contain ASCII characters because JSON can contain UTF-8 characters, and
 However, there is no way to signal to a JSON parser that the following field consists **only** of ASCII characters.
 ASCII text is faster to parse than UTF-8, so for some use cases this can be beneficial.
 
+There is no official date format for UTC / ISO dates in CSV, but it is possible to define your own.
+PDL comes with a built-in representation.
+
+It is possible to represent raw bytes in both CSV and JSON via e.g. Hexadecimally or Base64 encoded strings,
+but you will have to know to interpret these strings as bytes and decode them yourself.
+PDL comes with built-in support for both Hexadecimal and Base64 encodings, so you know that these tokens
+represents raw bytes.
+
 PDL can represent trees more compactly than JSON, provided the children of a field are all the same type.
 Thus, the children can be represented using a Table rather than via individual Object fields.
 
