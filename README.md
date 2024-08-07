@@ -58,6 +58,10 @@ Here is how that compares to some of the data formats listed above:
 
 Notes:
 
+JSON can contain ASCII characters because JSON can contain UTF-8 characters, and ASCII is a subset of UTF-8.
+However, there is no way to signal to a JSON parser that the following field consists **only** of ASCII characters.
+ASCII text is faster to parse than UTF-8, so for some use cases this can be beneficial.
+
 PDL can represent trees more compactly than JSON, provided the children of a field are all the same type.
 Thus, the children can be represented using a Table rather than via individual Object fields.
 
