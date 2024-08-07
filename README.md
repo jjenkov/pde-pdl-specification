@@ -9,7 +9,7 @@ afterward (if you need that). You can also create files directly in PDL and conv
 
 
 # A Versatile, Flexible, Fast, Compact Alternative to CSV, XML, JSON, MessagePack, CBOR, Protobuf, ION, Avro etc. 
-PDE + PDL are aiming at becoming the most expressive data representations available today.
+PDE + PDL is designed to be an expressive, flexible, fast, compact alternative to many of the otherwise commonly used data formats.
 
 PDE is a viable alternative to MessagePack, CBOR, Protobuf, ION (Amazon), Avro and other formats.
 
