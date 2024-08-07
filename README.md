@@ -1,4 +1,5 @@
-# Polymorph Data Encoding (PDE) and Polymorph Data Language - Specifications
+# Polymorph Data Encoding (PDE) Specification +
+# Polymorph Data Language (PDL) Specifications
 
 Polymorph Data Encoding (PDE) is a binary data encoding that is capable of representing a wide variety of structured
 data via a compact, fast to read and write binary encoding.
