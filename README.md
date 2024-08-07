@@ -1,4 +1,4 @@
-# Polymorph Data Encoding (PDE) Specification + Polymorph Data Language (PDL) Specification
+# Polymorph Data Encoding (PDE) Specification + Polymorph Data Language (PDL) Specification 
 
 Polymorph Data Encoding (PDE) is a binary data encoding that is capable of representing a wide variety of structured
 data via a compact, fast to read and write binary encoding.
@@ -10,6 +10,15 @@ afterward (if you need that). You can also create files directly in PDL and conv
 
 # A Versatile, Flexible, Fast, Compact Alternative to CSV, XML, JSON, MessagePack, CBOR, Protobuf, ION, Avro etc. 
 PDE + PDL are aiming at becoming the most expressive data representations available today.
+
+PDE is a viable alternative to MessagePack, CBOR, Protobuf, ION (Amazon), Avro and other formats.
+
+PDL is a viable alternative to CSV, JSON, XML and YAML.
+
+PDE + PDL does not require a schema. Both formats are self-describing enough to enable reading and writing of these
+formats. It would technically be possible to design a schema mechanism for PDE + PDL, but that is not a goal in 
+the short term. Maybe sometime in the future.
+
 
 PDE + PDL can efficiently represent the following data types and structures:
 
@@ -25,7 +34,39 @@ PDE + PDL can efficiently represent the following data types and structures:
 - Trees  (Via Tables Nested Inside Tables)
 - Object Graphs (Meaning Nested Objects or Tables Inside Objects)
 - Cyclic Object Graphs
-- Metadata
+- Metadata (In Progress)
+- Comments (PDL Only So Far)
+
+Here is how that compares to some of the data formats listed above:
+
+| Data Type            | PDL + PDE | JSON  |
+|----------------------|-----------|-------|
+| Boolean              | +         | +     |
+| Integer              | +         | +     |
+| Float                | +         | +     |
+| ASCII                | +         | + (*) |
+| UTF-8                | +         | +     |
+| UTC                  | +         |       |
+| Bytes                | +         | (+)   |
+| Object               | +         | +     |
+| Table                | +         |       |
+| Tree                 | +         | +     |
+| Object Graphs        | +         | +     |
+| Cyclic Object Graphs | +         |       |
+| Metadata             | +         |       |
+| Comments             | +         |       |
+
+Notes:
+
+PDL can represent trees more compactly than JSON, provided the children of a field are all the same type.
+Thus, the children can be represented using a Table rather than via individual Object fields.
+
+
+
+
+
+
+
 
 
 
