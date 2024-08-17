@@ -31,8 +31,17 @@ to encode the actual length in bytes of the value.
 
 
 
-| Type Code | Field Name    | Field Description                                                                   |
-|-----------|---------------|-------------------------------------------------------------------------------------|
-| 0         | BOOLEAN_NULL  | A single byte with the value 0 - representing a boolean field with a null value.    |
-| 1         | BOOLEAN_TRUE  | A single byte with the value 1 - representing a boolean field with the value true.  |
-| 2         | BOOLEAN_FALSE | A single byte with the value 2 - representing a boolean field with the value false. |
+| Type Code | Field Name      | Field Description                                                                   |
+|-----------|-----------------|-------------------------------------------------------------------------------------|
+| 0         | BOOLEAN_NULL    | A single byte with the value 0 - representing a boolean field with a null value.    |
+| 1         | BOOLEAN_TRUE    | A single byte with the value 1 - representing a boolean field with the value true.  |
+| 2         | BOOLEAN_FALSE   | A single byte with the value 2 - representing a boolean field with the value false. |
+| 3         | INT_NULL        | A single byte representing an Integer field with the value null.                    | 
+| 4         | INT_POS_1_BYTES | An positive integer field which value is 1 byte long.                               |
+| 5         | INT_POS_2_BYTES | An positive integer field which value is 2 bytes long.                              |
+| 6         | INT_POS_3_BYTES | An positive integer field which value is 3 bytes long.                              |
+| 7         | INT_POS_4_BYTES | An positive integer field which value is 4 bytes long.                              |
+| 8         | INT_POS_5_BYTES | An positive integer field which value is 5 bytes long.                              |
+| 9         | INT_POS_6_BYTES | An positive integer field which value is 6 bytes long.                              |
+| 10        | INT_POS_7_BYTES | An positive integer field which value is 7 bytes long.                              |
+| 11        | INT_POS_8_BYTES | An positive integer field which value is 8 bytes long.                              |
