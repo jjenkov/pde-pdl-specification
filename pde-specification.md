@@ -45,3 +45,11 @@ to encode the actual length in bytes of the value.
 | 9         | INT_POS_6_BYTES | An positive integer field which value is 6 bytes long.                              |
 | 10        | INT_POS_7_BYTES | An positive integer field which value is 7 bytes long.                              |
 | 11        | INT_POS_8_BYTES | An positive integer field which value is 8 bytes long.                              |
+| 12        | INT_NEG_1_BYTES | An negative integer field which value is 1 byte long.                               |
+| 13        | INT_NEG_2_BYTES | An negative integer field which value is 2 bytes long.                              |
+| 14        | INT_NEG_3_BYTES | An negative integer field which value is 3 bytes long.                              |
+| 15        | INT_NEG_4_BYTES | An negative integer field which value is 4 bytes long.                              |
+| 16        | INT_NEG_5_BYTES | An negative integer field which value is 5 bytes long.                              |
+| 17        | INT_NEG_6_BYTES | An negative integer field which value is 6 bytes long.                              |
+| 18        | INT_NEG_7_BYTES | An negative integer field which value is 7 bytes long.                              |
+| 19        | INT_NEG_8_BYTES | An negative integer field which value is 8 bytes long.                              |
