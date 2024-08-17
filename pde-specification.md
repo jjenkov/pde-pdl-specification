@@ -31,6 +31,10 @@ to encode the actual length in bytes of the value.
 
 
 
+## PDE Type Codes 
+The first byte of a PDE field is the PDE field's type code. The available PDE field type codes are listed in the table below. 
+
+
 | Type Code | Field Name      | Field Description                                                                   |
 |-----------|-----------------|-------------------------------------------------------------------------------------|
 | 0         | BOOLEAN_NULL    | A single byte with the value 0 - representing a boolean field with a null value.    |
@@ -53,3 +57,6 @@ to encode the actual length in bytes of the value.
 | 17        | INT_NEG_6_BYTES | An negative integer field which value is 6 bytes long.                              |
 | 18        | INT_NEG_7_BYTES | An negative integer field which value is 7 bytes long.                              |
 | 19        | INT_NEG_8_BYTES | An negative integer field which value is 8 bytes long.                              |
+| 20        | FLOAT_NULL      | A 1 byte long field representing a float field with a null value.                   |
+| 21        | FLOAT_4_BYTES   | A float field which value is 4 bytes long (32 bit float).                           |
+| 22        | FLOAT_8_BYTES   | A float field which value is 8 bytes long (64 bit float).                           |
