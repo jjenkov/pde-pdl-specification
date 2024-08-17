@@ -17,7 +17,7 @@ The PDE encoding is explained in a more tutorial style here:
 
 ## PDE Overview
 
-A PDE file (or stream) consists of a stream of PDE fields. 
+A PDE file (or stream) consists of a stream (sequence) of PDE fields. 
 
 Some fields are atomic, meaning they only contain raw data inside them. Other fields are composite, meaning
 they contain other PDE fields inside them.
