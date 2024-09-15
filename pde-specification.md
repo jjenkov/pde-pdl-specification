@@ -45,8 +45,10 @@ Remember, all integers, floats etc. are encoded using little endian encoding, me
     04   A3       # A positive integer field with a 1 byte value
     05   A3 0E    # A positive integer field with a 2 byte value - little endian encoded ( => 0EA3 => 3747 in decimal)
 
-    29   00 01   XX XX XX XX ...    # A bytes field with 2 length bytes (0 and 1 in little endian => 0100 as hex number => 256 in decimal) and the XX'es 
-                                    # represents the value bytes (there should be 256 in total - because that is what the length bytes say).
+    29   00 01   XX XX XX XX ...    # A bytes field with 2 length bytes (0 and 1 in little endian 
+                                    # => 0100 as hex number => 256 in decimal) and the XX'es 
+                                    # represents the value bytes (there should be 256 in total 
+                                    # - because that is what the length bytes say).
     
 
 
