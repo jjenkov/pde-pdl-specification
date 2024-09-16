@@ -17,10 +17,12 @@ The PDE encoding is explained in a more tutorial style here:
 
 ## PDE Overview
 
-A PDE file (or stream) consists of a stream (sequence) of PDE fields. 
+A PDE file (or stream) consists of a stream (sequence) of PDE fields. A PDE field contains a data value 
+of a certain data type (field type).
 
-Some fields are atomic, meaning they only contain raw data inside them. Other fields are composite, meaning
-they contain other PDE fields inside them.
+PDE fields can either be atomic or composite. An atomic field only contains a single raw data value.
+A composite field contains other PDE fields nested inside it. A composite field has no raw value of its own -
+only the nested PDE fields.
 
 Each PDE field has a type, length and value. The type, length and value can all be read from the bytes in
 the PDE byte stream.
@@ -37,14 +39,16 @@ Here are some examples in hexadecimal representation, showing
 
 Remember, all integers, floats etc. are encoded using little endian encoding, meaning the least significant byte of the number is the first byte in the sequence.
 
-
+    # PDE fields that consists of only 1 byte
     00            # A boolean null field
     01            # A boolean true field
     02            # A boolean false field
 
+    # PDE fields that consists of 1 type code byte and N value bytes
     04   A3       # A positive integer field with a 1 byte value
     05   A3 0E    # A positive integer field with a 2 byte value - little endian encoded ( => 0EA3 => 3747 in decimal)
 
+    # PDE field that consists of 
     29   00 01   XX XX XX XX ...    # A bytes field with 2 length bytes (0 and 1 in little endian 
                                     # => 0100 as hex number => 256 in decimal) and the XX'es 
                                     # represents the value bytes (there should be 256 in total 
@@ -53,7 +57,7 @@ Remember, all integers, floats etc. are encoded using little endian encoding, me
 
 
 
-## PDE Type Codes 
+## PDE Field Type Codes 
 The first byte of a PDE field is the PDE field's type code. The available PDE field type codes are listed in the table below. 
 
 
