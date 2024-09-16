@@ -20,9 +20,10 @@ The PDE encoding is explained in a more tutorial style here:
 A PDE file (or stream) consists of a stream (sequence) of PDE fields. A PDE field contains a data value 
 of a certain data type (field type).
 
-PDE fields can either be atomic or composite. An atomic field only contains a single raw data value.
-A composite field contains other PDE fields nested inside it. A composite field has no raw value of its own -
-only the nested PDE fields.
+PDE fields can either be atomic or composite. 
+
+ - An atomic field only contains a single raw data value.
+ - A composite field contains other PDE fields nested inside it. A composite field has no raw value of its own - only the nested PDE fields.
 
 Each PDE field has a type, length and value. The type, length and value can all be read from the bytes in
 the PDE byte stream.
