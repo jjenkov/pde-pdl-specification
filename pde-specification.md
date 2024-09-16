@@ -45,10 +45,10 @@ PDE fields can use one of the following different encoding schemes:
 
 What these encodings mean, is explained in the following list:
 
-1) A field type byte that also implicitly tells its value (1 byte in total).
-2) A field type byte + N value bytes (1 + N bytes total).
-3) A field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
-4) An extension field encoding - using 1 extension field type byte + 1 to 8 field type bytes + whatever bytes are required for that extended field encoding.
+1) 1 field type byte that also implicitly tells its value (1 byte in total).
+2) 1 field type byte + N value bytes (1 + N bytes total).
+3) 1 field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
+4) 1 extension field type byte + 1 to 8 field type bytes + whatever bytes are required for that extended field encoding.
 
 (Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
 To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
