@@ -50,7 +50,7 @@ schemes - which I have not yet 100% decided on. I will get back to that when I h
 A PDE field always has a single byte (the type code) that tells the field type.  
 
 Depending on the value of the field type byte (its numerical value) you can deduct some information about the 
-length of the value of that field too. Sometimes the value is implicit in the field type, so the field has no
+length of the value of that field. Sometimes the value is implicit in the field type, so the field has no
 explicit value bytes. Sometimes the field type indicates the exact number of bytes of the value (its length).
 And sometimes the field type indicates a number of length bytes following the type byte, which contain the
 number of bytes of the value (its length). The only way to find it is to look at the numerical value of
