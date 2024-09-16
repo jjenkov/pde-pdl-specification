@@ -38,6 +38,13 @@ rom the bytes in the PDE byte stream. No schema is needed.
 
 PDE fields can use one of the following different encoding schemes:
 
+1) 1 byte
+2) 1 + N bytes
+3) 1 + L + N bytes
+4) 1 + (1 to 8) + [L] + N bytes
+
+What these encodings mean, is explained in the following list:
+
 1) A field type byte that also implicitly tells its value (1 byte in total).
 2) A field type byte + N value bytes (1 + N bytes total).
 3) A field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
