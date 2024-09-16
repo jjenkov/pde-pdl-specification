@@ -11,26 +11,50 @@ See more about how PDE compares to other data formats in the README file here:
 [README.md](README.md)
 
 ## PDE Tutorial
-The PDE encoding is explained in a more tutorial style here:
+The PDE encoding is explained in a more tutorial-like style here:
 
 [https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html](https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html)
 
-## PDE Overview
+## PDE Files Are Streams of PDE Fields
 
 A PDE file (or stream) consists of a stream (sequence) of PDE fields. A PDE field contains a data value 
 of a certain data type (field type).
 
+
+## PDE Fields Are Either Atomic or Composite
 PDE fields can either be atomic or composite. 
 
- - An atomic field only contains a single raw data value.
+ - An atomic field only contains a single raw data value. 
  - A composite field contains other PDE fields nested inside it. A composite field has no raw value of its own - only the nested PDE fields.
 
-Each PDE field has a type, length and value. The type, length and value can all be read from the bytes in
-the PDE byte stream.
+A boolean PDE field is an example of an atomic field. It only contains a single null, true or false value.
 
-A PDE field starts with a single byte (the type code) that tells the type + some length information.
-The length information is either the exact length in bytes of the value, or the number of length bytes used
-to encode the actual length in bytes of the value.
+An object PDE field is an example of a composite field. An object field can have other PDE fields nested inside it.
+
+
+## PDE Field Encodings 
+Each PDE field are encoded in bytes using a field type, length and value. The type, length and value can all be read f
+rom the bytes in the PDE byte stream. No schema is needed.
+
+PDE fields can use one of the following different encoding schemes:
+
+1) A field type byte that also implicitly tells its value (1 byte in total).
+2) A field type byte + N value bytes (1 + N bytes total).
+3) A field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
+4) An extension field encoding - using 1 extension field type byte + 1 to 8 field type bytes + whatever bytes are required for that extended field encoding.
+
+(Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
+To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
+schemes - which I have not yet 100% decided on. I will get back to that when I have analyzed it in more detail.)
+
+A PDE field always has a single byte (the type code) that tells the field type.  
+
+Depending on the value of the field type byte (its numerical value) you can deduct some information about the 
+length of the value of that field too. Sometimes the value is implicit in the field type, so the field has no
+explicit value bytes. Sometimes the field type indicates the exact number of bytes of the value (its length).
+And sometimes the field type indicates a number of length bytes following the type byte, which contain the
+number of bytes of the value (its length). The only way to find it is to look at the numerical value of
+the field type byte, and consult this specification to see how that field type is encoded. 
 
 Here are some examples in hexadecimal representation, showing
 
@@ -53,7 +77,8 @@ Remember, all integers, floats etc. are encoded using little endian encoding, me
     29   00 01   XX XX XX XX ...    # A bytes field with 2 length bytes (0 and 1 in little endian 
                                     # => 0100 as hex number => 256 in decimal) and the XX'es 
                                     # represents the value bytes (there should be 256 in total 
-                                    # - because that is what the length bytes say).
+                                    # - because that is what the length bytes say - but this example
+                                    # only shows 4 value bytes).
     
 
 
