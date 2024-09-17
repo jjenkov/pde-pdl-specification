@@ -50,10 +50,6 @@ What these encodings mean, is explained in the following list:
 3) 1 field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
 4) 1 extension field type byte + 1 to 8 field type bytes + whatever bytes are required for that extended field encoding.
 
-(Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
-To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
-schemes - which I have not yet 100% decided on. I will get back to that when I have analyzed it in more detail.)
-
 A PDE field always has a single byte (the type code) that tells the field type.  
 
 Depending on the value of the field type byte (its numerical value) you can deduct some information about the 
@@ -61,7 +57,12 @@ length of the value of that field. Sometimes the value is implicit in the field 
 explicit value bytes. Sometimes the field type indicates the exact number of bytes of the value (its length).
 And sometimes the field type indicates a number of length bytes following the type byte, which contain the
 number of bytes of the value (its length). The only way to find it is to look at the numerical value of
-the field type byte, and consult this specification to see how that field type is encoded. 
+the field type byte, and consult this specification to see how that field type is encoded.
+
+(Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
+To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
+schemes - which I have not yet 100% decided on. I will get back to that when I have analyzed it in more detail.)
+
 
 Here are some examples in hexadecimal representation, showing
 
@@ -283,4 +284,22 @@ The first byte of a PDE field is the PDE field's type code. The available PDE fi
 | 253         | EXTENSION_6_BYTES       | An extension field using 6 extra bytes to contain the extended field type.                                                                 |
 | 254         | EXTENSION_7_BYTES       | An extension field using 7 extra bytes to contain the extended field type.                                                                 |
 | 255         | EXTENSION_8_BYTES       | An extension field using 8 extra bytes to contain the extended field type.                                                                 |
+
+
+
+## Boolean Encodings
+
+Boolean PDE fields consists of just 1 byte - the field type code. There are 3 different boolean field type codes:
+
+1) 0 = Boolean field with null value
+2) 1 = Boolean field with true value
+3) 2 = Boolean field with false value
+
+Each of these encodings are shown in hexadecimal notation with comments here:
+
+
+    # Boolean PDE field encodings
+    00            # A boolean null field
+    01            # A boolean true field
+    02            # A boolean false field
 
