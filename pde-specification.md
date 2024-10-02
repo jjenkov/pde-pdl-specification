@@ -61,10 +61,14 @@ the field type byte, and consult this specification to see how that field type i
 
 (Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
 To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
-schemes - which I have not yet 100% decided on. I will get back to that when I have analyzed it in more detail.)
+schemes - which I have not yet 100% decided on. I will get back and finish the design of extension field encodings 
+when I have analyzed it in more detail.)
 
+This diagram sums up the PDE encoding variations:
 
-Here are some examples in hexadecimal representation, showing
+![Polymorph Data Encodings](pde-encodings.png)
+
+Here are some PDE encoding examples in hexadecimal representation, showing
 
 - A PDE field consisting of only 1 byte (the field type code byte)
 - A PDE field consisting of 1 byte (the field type code byte) and some value bytes
@@ -303,3 +307,120 @@ Each of these encodings are shown in hexadecimal notation with comments here:
     01            # A boolean true field
     02            # A boolean false field
 
+
+
+## Integer Encodings
+
+Integer PDE fields consists of 1 type code byte, and up to 8 value bytes.
+How many value bytes an integer field has is signaled via its type code.
+
+The PDE integer field type codes go from the numeric value 3 to and including 19.
+You can see the exact values in the table earlier in this specification.
+
+The integer values are encoded using little endian encodings. 
+
+Negative integers are encoded using a positive value - in order to be able
+to represent them using as few bytes as possible. A negative value is encoded
+as the absolute (positive) value of the negative value plus 1. Here are a few
+examples:
+
+    abs( -128 +1 ) = 127
+    abs( -1 +1 ) = 0
+
+To be able to distinguish the negative values from positive values, integer fields
+with negative values have their own type codes, so you can see from the type code
+how to interpret the field value.
+
+Here are some PDE Integer field encoding examples. Remember that multi-byte numbers
+and values are encoded using little endian byte sequencing - so the hexadecimal number
+FF 00 would be encoded with the least significant byte first (left-most), meaning as 00 FF. 
+
+
+    03         # Positive integer field with null value
+    04 00      # Positive integer field with 1 byte long value - a value of 0
+    04 FF      # Positive integer field with 1 byte long value - a value of 255
+    05 FF01    # Positive integer field with 2 byte long value - a value of 511 (255 + 256)
+
+    0C 00      # Negative integer field with a   0 encoded value - representing a negative value of -1
+    0C 7F      # Negative integer field with a 127 encoded value - representing a negative value of -128
+    0C FF      # Negative integer field with a 255 encoded value - representing a negative value of -256
+    0D FF01    # Negative integer field with a 511 encoded value - representing a negative value of -512
+
+
+## Float Encodings
+
+Float PDE fields consist of 1 type code byte, and then either 0, 4 or 8 value bytes
+representing either a null value, a 4-byte floating point (float) 
+or an 8 byte floating point (double).
+
+The float PDE field type code numeric values go from 20 to and including 22.
+
+The encoding of the 4 and 8 byte floating point values follows the encoding used
+in Java - which follows the IEEE 754 standard. This means, that whatever endianness
+this standard specifies - is what is used in the PDE floating point field encoding.
+
+Here are a few, slightly abstract PDE floating point field encoding examples:
+
+    0E           # Floating point field with null value
+    0F XXXXXXXX  # Floating point field with 4 byte value. The X'es should be encoded according to the IEEE 754 standard.       
+    10 XXXXXXXX XXXXXXXX  # Floating point field with 8 byte value. The X'es should be encoded according to the IEEE 754 standard.
+
+
+## Bytes
+Bytes PDE fields consists of 1 type code byte, 0 to 8 length bytes, and 0 to 2^8 raw binary bytes.
+The bytes PDE field is intended to contain raw bytes, like the content of a file (e.g. an image or video file).
+
+The Bytes type code numeric values go from 23 to and including 47.
+
+Here are a few PDE bytes field encoding examples
+
+    17              # Bytes field with a null value
+    18              # Bytes field with 0 bytes as value (empty)
+    19 XX           # Bytes field with 1 byte as value
+    1A XXXX         # Bytes field with 1 bytea as value
+    28 02 XXXX      # Bytes field with 1 length byte, and 2 bytes as value
+    29 0400 XXXXXXXX  # Bytes field with 2 length bytes, and 4 bytes as value
+
+
+## ASCII
+
+The ASCII type code numeric values go from 48 to and including 72.
+
+## UTF-8
+
+The UTF-8 type code numeric values go from 73 to and including 97.
+
+
+## UTC
+
+The UTC type code numeric values go from 98 to and including 108.
+
+## Copy
+
+The Copy type code numeric values go from 109 to and including 116.
+
+## Reference
+
+The Reference type code numeric values go from 117 to and including 124.
+
+## Key
+
+The Key type code numeric values go from 125 to and including 143.
+
+## Object
+
+The Object type code numeric values go from 144 to and including 152.
+
+## Table
+
+The Table type code numeric values go from 153 to and including 161.
+
+## Metadata
+
+The Metadata type code numeric values go from 232 to and including 240.
+
+## Extensions
+
+The Extensions type code numeric values go from 241 to and including 255.
+
+## Comments
