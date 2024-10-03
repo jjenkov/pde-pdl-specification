@@ -377,18 +377,44 @@ Here are a few PDE bytes field encoding examples
     17              # Bytes field with a null value
     18              # Bytes field with 0 bytes as value (empty)
     19 XX           # Bytes field with 1 byte as value
-    1A XXXX         # Bytes field with 1 bytea as value
+    1A XXXX         # Bytes field with 2 bytea as value
     28 02 XXXX      # Bytes field with 1 length byte, and 2 bytes as value
     29 0400 XXXXXXXX  # Bytes field with 2 length bytes, and 4 bytes as value
 
 
 ## ASCII
 
+ASCII PDE fields consists of 1 type code byte, 0 to 8 length bytes, and 0 to 2^8 raw binary bytes.
+The ASCII PDE field is intended to contain ASCII characters which are just sequences of 1-byte characters.
+The encoding of ASCII fields is thus very similar to the encoding of bytes fields.
+
 The ASCII type code numeric values go from 48 to and including 72.
+
+Here are some PDE ASCII field encoding examples in hexadecimal notation:
+
+    30              # ASCII field with a null value
+    31              # ASCII field with 0 bytes as value (empty)
+    32 XX           # ASCII field with 1 byte as value
+    33 XXXX         # ASCII field with 2 bytea as value
+    41 02 XXXX      # ASCII field with 1 length byte, and 2 bytes as value
+    42 0400 XXXXXXXX  # ASCII field with 2 length bytes, and 4 bytes as value
 
 ## UTF-8
 
+UTF-8 PDE fields consists of 1 type code byte, 0 to 8 length bytes, and 0 to 2^8 raw binary bytes.
+The UTF-8 PDE field is intended to contain UTF-8 characters which are just sequences of 1 to 4-byte characters.
+The encoding of UTF-8 fields is thus very similar to the encoding of bytes fields.
+
 The UTF-8 type code numeric values go from 73 to and including 97.
+
+Here are some PDE UTF-8 field encoding examples in hexadecimal notation:
+
+    49              # UTF-8 field with a null value
+    4A              # UTF-8 field with 0 bytes as value (empty)
+    4B XX           # UTF-8 field with 1 byte as value
+    4C XXXX         # UTF-8 field with 2 bytea as value
+    5A 02 XXXX      # UTF-8 field with 1 length byte, and 2 bytes as value
+    5B 0400 XXXXXXXX  # UTF-8 field with 2 length bytes, and 4 bytes as value
 
 
 ## UTC
