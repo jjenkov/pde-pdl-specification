@@ -480,15 +480,71 @@ The Reference type code numeric values go from 117 to and including 124.
 
 
 ## Key
+A key field represents a property name in an object field (like a key in a map / dictionary) 
+or a column name in a table field. Keys (property names or column names) are typically not
+longer than 65535 bytes long. 
+
+The value of a key field is just s sequence of bytes in the same way as in a bytes field.
+How they bytes are interpreted (as binary values, ASCII characters or UTF-8 characters etc.)
+is up to the user of the key field.
+
 The Key type code numeric values go from 125 to and including 143.
 
+
 ## Object
+An object field contains other PDE fields nested inside it. These nested fields can be
+either pairs of key fields and other fields, or it can be just other non-key fields.
+
+An object that contains pairs of key fields and other fields is interpreted like an 
+object with pairs of property names and values. 
+
+An object that contains only non-key fields is interpreted like an object of only 
+the property values. You will need to have some information outside the object field
+to know what property each nested field is the value of. You could do this with some
+kind of schema or other contract that specifies what each nested field represents.
 
 The Object type code numeric values go from 144 to and including 152.
 
+    8F    # Object field with null value
+    
+    91       # Object field with 2 length bytes
+    0B00     # The length bytes (with the value 11 (000B) encoded in small endian)
+    7F 4331  # Key field with the value C1
+    04 01    # Positive integer field with value 1
+    7F 4332  # Key field with the value C2
+    4C XXXX   # UTF-8 field with 2 bytes length
+
+
 ## Table
+A table field contains "rows" of fields (sets of fields) that each represents a record in a tabular structure.
+This is similar to how data is encoded inside a CSV file, or in the results from a query to a relational database.
+
+A table field only contains the column names once - at the beginning of the table - just like in a
+CSV file. The column names are represented by a series of key fields. Each key field represents
+the name (key) of a single column of fields. 
+
+Each row in the table consists of a set PDE fields. Each field in a row (a record) corresponds
+to a value for a column in the table. If you imagine a table containing a list of similarly structured
+objects (rows / records), then the property names of the objects is only contained once in the table
+field, followed by the values for each property - for each row (object / record).
+
+The column name series of key fields ends at the first non-key field.
 
 The Table type code numeric values go from 153 to and including 161.
+
+    98        # A table field with the value null
+
+    9A        # A table field with 2 length bytes (this is the type code)
+    1700      # The 2 length bytes with a value of 23 (23 bytes within the table field - after the length bytes)
+    04 03     # A positive integer field telling the number of rows in the table (3 rows). 
+
+    7F 4331   # First key field - representing the first column name (C1). 
+    7F 4332   # First key field - representing the first column name (C2).
+
+    0401 4CXXXX     # First row with a positive integer field and an UTF-8 field
+    0403 4CXXXX     # Second row with a positive integer field and an UTF-8 field
+    0408 4CXXXX     # Third row with a positive integer field and an UTF-8 field
+    
 
 ## Metadata
 
