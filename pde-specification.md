@@ -200,70 +200,69 @@ The first byte of a PDE field is the PDE field's type code. The available PDE fi
 | 96          | UTF_8_7_LENGTH_BYTES    | A UTF-8 field that uses 7 length byte to represent the length of the field value.                                                          |
 | 97          | UTF_8_8_LENGTH_BYTES    | A UTF-8 field that uses 8 length byte to represent the length of the field value.                                                          |
 | 98          | UTC_NULL                | A UTC field with a null value.                                                                                                             |
-| 99          | UTC_0_BYTES             | A UTC field with an empty value (not sure if this has an actual use case?).                                                                |
-| 100         | UTC_2_BYTES             | A UTC field with only a year specified - in its 2 bytes.                                                                                   |
-| 101         | UTC_3_BYTES             | A UTC field with a year and month specified - in its 3 bytes.                                                                              |
-| 102         | UTC_4_BYTES             | A UTC field with a year, month and day specified - in its 4 bytes.                                                                         |
-| 103         | UTC_5_BYTES             | A UTC field with a year, month, day and hour specified - in its 5 bytes.                                                                   |
-| 104         | UTC_6_BYTES             | A UTC field with a year, month, day, hour and minutes specified - in its 6 bytes.                                                          |
-| 105         | UTC_7_BYTES             | A UTC field with a year, month, day, hour, minute and seconds specified - in its 7 bytes.                                                  |
-| 106         | UTC_8_BYTES             | A UTC field with a UTC timestamp in milliseconds in its 8 bytes.                                                                           |
-| 107         | UTC_9_BYTES             | A UTC field with a year, month, day, hour, minutes, seconds + milliseconds specified - in its 9 bytes.                                     |
-| 108         | UTC_10_BYTES            | A UTC field with a year, month, day, hour, minutes, seconds + nanoseconds specified - in its 10 bytes.                                     |
-| 109         | COPY_1_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 1 byte to represent the relative offset.       |
-| 110         | COPY_2_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 2 bytes to represent the relative offset.      |
-| 111         | COPY_3_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 3 bytes to represent the relative offset.      |
-| 112         | COPY_4_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 4 bytes to represent the relative offset.      |
-| 113         | COPY_5_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 5 bytes to represent the relative offset.      |
-| 114         | COPY_6_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 6 bytes to represent the relative offset.      |
-| 115         | COPY_7_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 7 bytes to represent the relative offset.      |
-| 116         | COPY_8_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 8 bytes to represent the relative offset.      |
-| 117         | REFERENCE_1_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 1 byte to represent the relative offset.  |
-| 118         | REFERENCE_2_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 2 bytes to represent the relative offset. |
-| 119         | REFERENCE_3_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 3 bytes to represent the relative offset. |
-| 120         | REFERENCE_4_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 4 bytes to represent the relative offset. |
-| 121         | REFERENCE_5_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 5 bytes to represent the relative offset. |
-| 122         | REFERENCE_6_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 6 bytes to represent the relative offset. |
-| 123         | REFERENCE_7_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 7 bytes to represent the relative offset. |
-| 124         | REFERENCE_8_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 8 bytes to represent the relative offset. |
-| 125         | KEY_NULL                | A key field with a null value.                                                                                                             |
-| 126         | KEY_0_BYTES             | A key field with an empty value.                                                                                                           |
-| 127         | KEY_1_BYTES             | A key field with a 1 byte value.                                                                                                           |
-| 128         | KEY_2_BYTES             | A key field with a 2 byte value.                                                                                                           |
-| 129         | KEY_3_BYTES             | A key field with a 3 byte value.                                                                                                           |
-| 130         | KEY_4_BYTES             | A key field with a 4 byte value.                                                                                                           |
-| 131         | KEY_5_BYTES             | A key field with a 5 byte value.                                                                                                           |
-| 132         | KEY_6_BYTES             | A key field with a 6 byte value.                                                                                                           |
-| 133         | KEY_7_BYTES             | A key field with a 7 byte value.                                                                                                           |
-| 134         | KEY_8_BYTES             | A key field with a 8 byte value.                                                                                                           |
-| 135         | KEY_9_BYTES             | A key field with a 9 byte value.                                                                                                           |
-| 136         | KEY_10_BYTES            | A key field with a 10 byte value.                                                                                                          |
-| 137         | KEY_11_BYTES            | A key field with a 11 byte value.                                                                                                          |
-| 138         | KEY_12_BYTES            | A key field with a 12 byte value.                                                                                                          |
-| 139         | KEY_13_BYTES            | A key field with a 13 byte value.                                                                                                          |
-| 140         | KEY_14_BYTES            | A key field with a 14 byte value.                                                                                                          |
-| 141         | KEY_15_BYTES            | A key field with a 15 byte value.                                                                                                          |
-| 142         | KEY_1_LENGTH_BYTES      | A key field with 1 length byte to represent the length of its value.                                                                       |
-| 143         | KEY_2_LENGTH_BYTES      | A key field with 2 length bytes to represent the length of its value.                                                                      |
-| 144         | OBJECT_NULL             | An object field with a null value.                                                                                                         |
-| 145         | OBJECT_1_LENGTH_BYTES   | An object field with 1 length byte to represent the length of its value (nested fields).                                                   |
-| 146         | OBJECT_2_LENGTH_BYTES   | An object field with 2 length byte to represent the length of its value (nested fields).                                                   |
-| 147         | OBJECT_3_LENGTH_BYTES   | An object field with 3 length byte to represent the length of its value (nested fields).                                                   |
-| 148         | OBJECT_4_LENGTH_BYTES   | An object field with 4 length byte to represent the length of its value (nested fields).                                                   |
-| 149         | OBJECT_5_LENGTH_BYTES   | An object field with 5 length byte to represent the length of its value (nested fields).                                                   |
-| 150         | OBJECT_6_LENGTH_BYTES   | An object field with 6 length byte to represent the length of its value (nested fields).                                                   |
-| 151         | OBJECT_7_LENGTH_BYTES   | An object field with 7 length byte to represent the length of its value (nested fields).                                                   |
-| 152         | OBJECT_8_LENGTH_BYTES   | An object field with 8 length byte to represent the length of its value (nested fields).                                                   |
-| 153         | TABLE_NULL              | An table field with a null value.                                                                                                          |
-| 154         | TABLE_1_LENGTH_BYTES    | An table field with 1 length byte to represent the length of its value (nested fields).                                                    |
-| 155         | TABLE_2_LENGTH_BYTES    | An table field with 2 length byte to represent the length of its value (nested fields).                                                    |
-| 156         | TABLE_3_LENGTH_BYTES    | An table field with 3 length byte to represent the length of its value (nested fields).                                                    |
-| 157         | TABLE_4_LENGTH_BYTES    | An table field with 4 length byte to represent the length of its value (nested fields).                                                    |
-| 158         | TABLE_5_LENGTH_BYTES    | An table field with 5 length byte to represent the length of its value (nested fields).                                                    |
-| 159         | TABLE_6_LENGTH_BYTES    | An table field with 6 length byte to represent the length of its value (nested fields).                                                    |
-| 160         | TABLE_7_LENGTH_BYTES    | An table field with 7 length byte to represent the length of its value (nested fields).                                                    |
-| 161         | TABLE_8_LENGTH_BYTES    | An table field with 8 length byte to represent the length of its value (nested fields).                                                    |
-| 162 ... 231 | Unassigned              | These codes have not yet been assigned to any field.                                                                                       |
+| 99          | UTC_2_BYTES             | A UTC field with only a year specified - in its 2 bytes.                                                                                   |
+| 100         | UTC_3_BYTES             | A UTC field with a year and month specified - in its 3 bytes.                                                                              |
+| 101         | UTC_4_BYTES             | A UTC field with a year, month and day specified - in its 4 bytes.                                                                         |
+| 102         | UTC_5_BYTES             | A UTC field with a year, month, day and hour specified - in its 5 bytes.                                                                   |
+| 103         | UTC_6_BYTES             | A UTC field with a year, month, day, hour and minutes specified - in its 6 bytes.                                                          |
+| 104         | UTC_7_BYTES             | A UTC field with a year, month, day, hour, minute and seconds specified - in its 7 bytes.                                                  |
+| 105         | UTC_8_BYTES             | A UTC field with a UTC timestamp in milliseconds in its 8 bytes.                                                                           |
+| 106         | UTC_9_BYTES             | A UTC field with a year, month, day, hour, minutes, seconds + milliseconds specified - in its 9 bytes.                                     |
+| 107         | UTC_10_BYTES            | A UTC field with a year, month, day, hour, minutes, seconds + nanoseconds specified - in its 10 bytes.                                     |
+| 108         | COPY_1_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 1 byte to represent the relative offset.       |
+| 109         | COPY_2_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 2 bytes to represent the relative offset.      |
+| 110         | COPY_3_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 3 bytes to represent the relative offset.      |
+| 111         | COPY_4_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 4 bytes to represent the relative offset.      |
+| 112         | COPY_5_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 5 bytes to represent the relative offset.      |
+| 113         | COPY_6_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 6 bytes to represent the relative offset.      |
+| 114         | COPY_7_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 7 bytes to represent the relative offset.      |
+| 115         | COPY_8_BYTES            | A copy of another field found a relative number of bytes earlier in this PDE stream - using 8 bytes to represent the relative offset.      |
+| 116         | REFERENCE_1_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 1 byte to represent the relative offset.  |
+| 117         | REFERENCE_2_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 2 bytes to represent the relative offset. |
+| 118         | REFERENCE_3_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 3 bytes to represent the relative offset. |
+| 119         | REFERENCE_4_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 4 bytes to represent the relative offset. |
+| 120         | REFERENCE_5_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 5 bytes to represent the relative offset. |
+| 121         | REFERENCE_6_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 6 bytes to represent the relative offset. |
+| 122         | REFERENCE_7_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 7 bytes to represent the relative offset. |
+| 123         | REFERENCE_8_BYTES       | A reference to another field found a relative number of bytes earlier in this PDE stream - using 8 bytes to represent the relative offset. |
+| 124         | KEY_NULL                | A key field with a null value.                                                                                                             |
+| 125         | KEY_0_BYTES             | A key field with an empty value.                                                                                                           |
+| 126         | KEY_1_BYTES             | A key field with a 1 byte value.                                                                                                           |
+| 127         | KEY_2_BYTES             | A key field with a 2 byte value.                                                                                                           |
+| 128         | KEY_3_BYTES             | A key field with a 3 byte value.                                                                                                           |
+| 129         | KEY_4_BYTES             | A key field with a 4 byte value.                                                                                                           |
+| 130         | KEY_5_BYTES             | A key field with a 5 byte value.                                                                                                           |
+| 131         | KEY_6_BYTES             | A key field with a 6 byte value.                                                                                                           |
+| 132         | KEY_7_BYTES             | A key field with a 7 byte value.                                                                                                           |
+| 133         | KEY_8_BYTES             | A key field with a 8 byte value.                                                                                                           |
+| 134         | KEY_9_BYTES             | A key field with a 9 byte value.                                                                                                           |
+| 135         | KEY_10_BYTES            | A key field with a 10 byte value.                                                                                                          |
+| 136         | KEY_11_BYTES            | A key field with a 11 byte value.                                                                                                          |
+| 137         | KEY_12_BYTES            | A key field with a 12 byte value.                                                                                                          |
+| 138         | KEY_13_BYTES            | A key field with a 13 byte value.                                                                                                          |
+| 139         | KEY_14_BYTES            | A key field with a 14 byte value.                                                                                                          |
+| 140         | KEY_15_BYTES            | A key field with a 15 byte value.                                                                                                          |
+| 141         | KEY_1_LENGTH_BYTES      | A key field with 1 length byte to represent the length of its value.                                                                       |
+| 142         | KEY_2_LENGTH_BYTES      | A key field with 2 length bytes to represent the length of its value.                                                                      |
+| 143         | OBJECT_NULL             | An object field with a null value.                                                                                                         |
+| 144         | OBJECT_1_LENGTH_BYTES   | An object field with 1 length byte to represent the length of its value (nested fields).                                                   |
+| 145         | OBJECT_2_LENGTH_BYTES   | An object field with 2 length byte to represent the length of its value (nested fields).                                                   |
+| 146         | OBJECT_3_LENGTH_BYTES   | An object field with 3 length byte to represent the length of its value (nested fields).                                                   |
+| 147         | OBJECT_4_LENGTH_BYTES   | An object field with 4 length byte to represent the length of its value (nested fields).                                                   |
+| 148         | OBJECT_5_LENGTH_BYTES   | An object field with 5 length byte to represent the length of its value (nested fields).                                                   |
+| 149         | OBJECT_6_LENGTH_BYTES   | An object field with 6 length byte to represent the length of its value (nested fields).                                                   |
+| 150         | OBJECT_7_LENGTH_BYTES   | An object field with 7 length byte to represent the length of its value (nested fields).                                                   |
+| 151         | OBJECT_8_LENGTH_BYTES   | An object field with 8 length byte to represent the length of its value (nested fields).                                                   |
+| 152         | TABLE_NULL              | An table field with a null value.                                                                                                          |
+| 153         | TABLE_1_LENGTH_BYTES    | An table field with 1 length byte to represent the length of its value (nested fields).                                                    |
+| 154         | TABLE_2_LENGTH_BYTES    | An table field with 2 length byte to represent the length of its value (nested fields).                                                    |
+| 155         | TABLE_3_LENGTH_BYTES    | An table field with 3 length byte to represent the length of its value (nested fields).                                                    |
+| 156         | TABLE_4_LENGTH_BYTES    | An table field with 4 length byte to represent the length of its value (nested fields).                                                    |
+| 157         | TABLE_5_LENGTH_BYTES    | An table field with 5 length byte to represent the length of its value (nested fields).                                                    |
+| 158         | TABLE_6_LENGTH_BYTES    | An table field with 6 length byte to represent the length of its value (nested fields).                                                    |
+| 159         | TABLE_7_LENGTH_BYTES    | An table field with 7 length byte to represent the length of its value (nested fields).                                                    |
+| 160         | TABLE_8_LENGTH_BYTES    | An table field with 8 length byte to represent the length of its value (nested fields).                                                    |
+| 161 ... 231 | Unassigned              | These codes have not yet been assigned to any field.                                                                                       |
 | 232         | METADATA_NULL           | A metadata field with a null value.                                                                                                        |
 | 233         | METADATA_1_LENGTH_BYTES | A metadata field using 1 byte to represent the length of its body (value => nested fields).                                                |
 | 234         | METADATA_2_LENGTH_BYTES | A metadata field using 2 bytes to represent the length of its body (value => nested fields).                                               |
@@ -419,18 +418,68 @@ Here are some PDE UTF-8 field encoding examples in hexadecimal notation:
 
 ## UTC
 
+UTC PDE fields consists of 1 type code byte and 2 to 10 value bytes. The type code numeric
+value tells how many value bytes the field has.
+
 The UTC type code numeric values go from 98 to and including 108.
 
+2 value bytes means 2 bytes that contains only a year (up to 65535 years).
+
+3 value bytes means 2 bytes for the year + 1 byte for the month.
+
+4 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day.
+
+5 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day + 1 byte for the hour.
+
+6 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day + 1 byte for the hour + 
+1 byte for the minutes.
+
+7 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day + 1 byte for the hour + 
+1 byte for the minutes + 1 byte for the seconds.
+
+8 value bytes means an 8 byte timestamp in milliseconds (note this is different from all the other representations!).
+
+9 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day + 1 byte for the hour + 
+1 byte for the minutes + 1 byte for the seconds + 2 bytes for the milliseconds.
+
+10 value bytes means 2 bytes for the year + 1 byte for the month + 1 byte for the day + 1 byte for the hour +
+1 byte for the minutes + 1 byte for the seconds + 3 bytes for the nanoseconds 
+(note - no milliseconds in this representation - only seconds and nanoseconds).
+
+
+    62                # UTC field with a null value
+    63 E907           # UTC field with 2 byte year with the value 2025 (2025 = 07E9 in hex - but remember little endian encoding of year bytes!)
+    
+    # UTC field with value 2025-12-31 23:59:59.999 (little endian encoding of year (07E9) and millisecond (03E7) bytes)
+    6A E907 0C 1F 17 38 38 E703
+
+
 ## Copy
+A copy field represents a copy of another field found earlier in the same PDE field stream. This is useful
+in situations where the data you are sending contains redundant data within different data structures.
+
+A copy field contains a positive integer number between 1 and 8 bytes. This positive integer number is
+an offset to a PDE field found that number of bytes earlier in the same PDE field stream. 
+
+The encoding of the integer value is the same as the encoding of a positive integer PDE field value.
 
 The Copy type code numeric values go from 109 to and including 116.
 
+
 ## Reference
+A reference field represents a reference to another field found earlier in the same PDE field stream. 
+This is useful when representing a cyclic object graph, where e.g. a child object needs to reference
+a parent object. 
+
+A reference field contains a positive integer number between 1 and 8 bytes. This positive integer number is
+an offset to a PDE field found that number of bytes earlier in the same PDE field stream.
+
+The encoding of the integer value is the same as the encoding of a positive integer PDE field value.
 
 The Reference type code numeric values go from 117 to and including 124.
 
-## Key
 
+## Key
 The Key type code numeric values go from 125 to and including 143.
 
 ## Object
