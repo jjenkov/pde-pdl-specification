@@ -512,7 +512,7 @@ The Object type code numeric values go from 144 to and including 152.
     7F 4331  # Key field with the value C1
     04 01    # Positive integer field with value 1
     7F 4332  # Key field with the value C2
-    4C XXXX   # UTF-8 field with 2 bytes length
+    4C XXXX  # UTF-8 field with 2 bytes length
 
 
 ## Table
@@ -547,11 +547,59 @@ The Table type code numeric values go from 153 to and including 161.
     
 
 ## Metadata
+A metadata field represents some metadata about the data in the PDE field stream - which is not semantically
+part of the data in the PDE field stream. What exactly you use metadata fields for, and what their specific
+semantic meaning is - is up to you to decide.
 
-The Metadata type code numeric values go from 232 to and including 240.
+For instance, if you have multiple "sub-streams" of data within the same PDE field stream, you could use 
+metadata fields to signal a change of sub-stream - meaning all PDE fields following the metadata field should
+be interpreted as belonging to that new sub-stream identified by the metadata field - as illustrated below.
+
+    metadata field - sub-stream 1
+    field
+    field
+    field
+    metadata field - sub-stream 2
+    field
+    field
+    metadata field - sub-stream 1
+    field
+   
+Structurally and encoding-wise, a metadata field is similar to an object field. You can have whatever
+fields nested inside it that fits your needs. Either key + value field pairs, or only keys (tags), or
+only values (if you know that keys they belong to out-of-stream (e.g. via a schema or similar)). 
+
+The main difference to an object field is that metadata field use their own type code values.
+Everything else is the same as object fields.
+
+The Metadata type code numeric values go from 232 to and including 240. Note, that a possible change
+in the type code numeric values for Extension fields may shift the numeric type code values of 
+metadata fields a bit down (like 1 or 2 values or so). If you can - wait with using metadata fields
+until the encoding for Extension fields has stabilized specification-wise.
+
 
 ## Extensions
+Extension fields are used to create your own custom fields with your own semantic meanings.
 
-The Extensions type code numeric values go from 241 to and including 255.
+Extension fields are marked with one of the extension field type codes, followed by an additional
+extended field type code which tells the actual semantic type code of that field.
+
+The exact encoding of extension fields has not yet been 100% decided. There are currently 15
+extension field type codes, but maybe that will be changed to 16 (which will cause the metadata type code numeric 
+values to shift down 1 value).
+
+The Extensions type code numeric values currently go from 241 to and including 255 (but might change to
+240 to and including 255).
+
 
 ## Comments
+
+Comment fields are used to contain comments about the data in the stream. 
+
+Typically, comments would come from a Polymorph Data Language (PDL) file that was converted to Polymorph Data Encoding (PDE).
+The comments in that PDL file could then be retained in the PDE file (if desired).
+
+For now, there is no explicitly defined encoding for comments. I am still contemplating 
+whether comments should be implemented via metadata fields, or via extension fields.
+I do not think comments should be allowed to use the core type code numeric value space
+from 0 to 255. I would prefer to reserve those for more commonly transferred data types. 
