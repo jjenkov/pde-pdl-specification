@@ -1,24 +1,92 @@
 # Polymorph Data Encoding (PDE) Specification
 
 Polymorph Data Encoding (PDE) is a binary data encoding that is versatile, flexible, compact and fast to read and write.
-See more about the purpose of PDE in the README file here:
-
-[README.md](README.md)
-
 Polymorph Data Encoding is an alternative to MessagePack, CBOR, Protobuf, ION, Avro and other binary data formats.
-See more about how PDE compares to other data formats in the README file here:
+
+
+See more about the purpose of PDE, and how PDE compares to other data formats, in the README file here:
 
 [README.md](README.md)
+
 
 ## PDE Tutorial
-The PDE encoding is explained in a more tutorial-like style here:
+The PDE encoding is explained in a more tutorial-like style (link below). In case of differences between
+the tutorial and this specification - trust this specification - not the tutorial! . Any discrepancies will
+be fixed as fast as possible.
 
 [https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html](https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html)
 
+
 ## PDE Files Are Streams of PDE Fields
 
-A PDE file (or stream) consists of a stream (sequence) of PDE fields. A PDE field contains a data value 
-of a certain data type (field type).
+A PDE file (or stream) consists of a stream (sequence) of PDE fields. This is different from XML and JSON which
+consists of a single "document" (a single root XML element, or a single root JSON array or object). 
+
+A PDE field contains a data value of a certain data type (field type).
+
+Each field within a PDE file (or stream) is considered to have an offset. The offset represents the offset 
+of that field from the beginning of the file (or stream). The first PDE field has the offset 0.
+The next PDE field has the offset 1 etc. 
+
+Only root level PDE fields have an offset. PDE fields nested within another PDE field are not considered
+to have stream level offsets.
+
+The offsets are not explicitly visible in the PDE file (or stream). They are implicit - and based on
+the offsets of the fields that preceded it in the file (or stream).
+
+It is possible to have offset gaps in a PDE stream. For instance, if a PDE stream represented a
+change log for a system, and you decide to create a snapshot of that stream - the resulting snapshot
+PDE field stream (or file) might have less PDE fields than the original - because some of the 
+fields from the original stream are now represented by a single field containing all the changes
+made to the abstract entity referenced by the replaced PDE fields.
+
+Offset gaps will be modeled using metadata fields - just like sub-stream IDs.
+
+PDE field offsets enable you to PDE field streams as a means of subscribing to changes
+either from the beginning of a PDE field stream (offset 0), or from the last offset you have already
+received (e.g. offset 4785).  
+
+Similarly, you could to partial / incremental processing of a PDE file. If you have already processed
+up to offset N of a PDE file, you can continue from offset N+1 the next time you open the file.
+
+PDE field offsets also enable easy incremental replication of PDE files and streams between computers.
+
+Here is an abstract example of a PDE field stream:
+
+    field     # field with offset 0 
+    field     # field with offset 1 
+    field     # field with offset 2
+
+    metadata field - offset 10   # metadata field that represents a gap in offsets from 3 to and including 9.
+    field     # field with offset 10 
+    field     # field with offset 11 
+    field     # field with offset 12
+
+
+In case a PDE field stream contains sub-streams - the offsets of each PDE field should be interpreted 
+as being an offset within each sub-stream - not within the main multi-sub-stream stream. In other words,
+sub-streams have their own individual offsets. 
+
+Similarly, offset gaps within a sub-stream only count for that sub-stream - not for other sub-streams
+within the same multi-sub-stream stream.
+
+    # metadata field that represents beginning of substream 1
+    metadata field - sub-stream 1   
+    field     # field with offset 0 
+    field     # field with offset 1 
+    field     # field with offset 2
+
+    # metadata field that represents beginning of substream 2
+    metadata field - sub-stream 2    
+    field     # field with offset 0 
+    field     # field with offset 1 
+    field     # field with offset 2
+
+    # metadata field that represents a gap in offsets from 3 to and including 9 - within sub-stream 2 only 
+    metadata field - offset 10   
+    field     # field with offset 10 
+    field     # field with offset 11 
+    field     # field with offset 12
 
 
 ## PDE Fields Are Either Atomic or Composite
@@ -30,6 +98,7 @@ PDE fields can either be atomic or composite.
 A boolean PDE field is an example of an atomic field. It only contains a single null, true or false value.
 
 An object PDE field is an example of a composite field. An object field can have other PDE fields nested inside it.
+
 
 
 ## PDE Field Encodings 
@@ -262,31 +331,32 @@ The first byte of a PDE field is the PDE field's type code. The available PDE fi
 | 158         | TABLE_6_LENGTH_BYTES    | An table field with 6 length byte to represent the length of its value (nested fields).                                                    |
 | 159         | TABLE_7_LENGTH_BYTES    | An table field with 7 length byte to represent the length of its value (nested fields).                                                    |
 | 160         | TABLE_8_LENGTH_BYTES    | An table field with 8 length byte to represent the length of its value (nested fields).                                                    |
-| 161 ... 231 | Unassigned              | These codes have not yet been assigned to any field.                                                                                       |
-| 232         | METADATA_NULL           | A metadata field with a null value.                                                                                                        |
-| 233         | METADATA_1_LENGTH_BYTES | A metadata field using 1 byte to represent the length of its body (value => nested fields).                                                |
-| 234         | METADATA_2_LENGTH_BYTES | A metadata field using 2 bytes to represent the length of its body (value => nested fields).                                               |
-| 235         | METADATA_3_LENGTH_BYTES | A metadata field using 3 bytes to represent the length of its body (value => nested fields).                                               |
-| 236         | METADATA_4_LENGTH_BYTES | A metadata field using 4 bytes to represent the length of its body (value => nested fields).                                               |
-| 237         | METADATA_5_LENGTH_BYTES | A metadata field using 5 bytes to represent the length of its body (value => nested fields).                                               |
-| 238         | METADATA_6_LENGTH_BYTES | A metadata field using 6 bytes to represent the length of its body (value => nested fields).                                               |
-| 239         | METADATA_7_LENGTH_BYTES | A metadata field using 7 bytes to represent the length of its body (value => nested fields).                                               |
-| 240         | METADATA_8_LENGTH_BYTES | A metadata field using 8 bytes to represent the length of its body (value => nested fields).                                               |
-| 241         | EXTENSION_1_BYTE_1      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 242         | EXTENSION_1_BYTE_2      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 243         | EXTENSION_1_BYTE_3      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 244         | EXTENSION_1_BYTE_4      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 245         | EXTENSION_1_BYTE_5      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 246         | EXTENSION_1_BYTE_6      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 247         | EXTENSION_1_BYTE_7      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 248         | EXTENSION_1_BYTE_8      | An extension field using 1 extra byte to contain the extended field type.                                                                  |
-| 249         | EXTENSION_2_BYTES       | An extension field using 2 extra bytes to contain the extended field type.                                                                 |
-| 250         | EXTENSION_3_BYTES       | An extension field using 3 extra bytes to contain the extended field type.                                                                 |
-| 251         | EXTENSION_4_BYTES       | An extension field using 4 extra bytes to contain the extended field type.                                                                 |
-| 252         | EXTENSION_5_BYTES       | An extension field using 5 extra bytes to contain the extended field type.                                                                 |
-| 253         | EXTENSION_6_BYTES       | An extension field using 6 extra bytes to contain the extended field type.                                                                 |
-| 254         | EXTENSION_7_BYTES       | An extension field using 7 extra bytes to contain the extended field type.                                                                 |
-| 255         | EXTENSION_8_BYTES       | An extension field using 8 extra bytes to contain the extended field type.                                                                 |
+| 161 ... 230 | [ Unassigned ]          | These codes have not yet been assigned to any field.                                                                                       |
+| 231         | METADATA_NULL           | A metadata field with a null value.                                                                                                        |
+| 232         | METADATA_1_LENGTH_BYTES | A metadata field using 1 byte to represent the length of its body (value => nested fields).                                                |
+| 233         | METADATA_2_LENGTH_BYTES | A metadata field using 2 bytes to represent the length of its body (value => nested fields).                                               |
+| 234         | METADATA_3_LENGTH_BYTES | A metadata field using 3 bytes to represent the length of its body (value => nested fields).                                               |
+| 235         | METADATA_4_LENGTH_BYTES | A metadata field using 4 bytes to represent the length of its body (value => nested fields).                                               |
+| 236         | METADATA_5_LENGTH_BYTES | A metadata field using 5 bytes to represent the length of its body (value => nested fields).                                               |
+| 237         | METADATA_6_LENGTH_BYTES | A metadata field using 6 bytes to represent the length of its body (value => nested fields).                                               |
+| 238         | METADATA_7_LENGTH_BYTES | A metadata field using 7 bytes to represent the length of its body (value => nested fields).                                               |
+| 239         | METADATA_8_LENGTH_BYTES | A metadata field using 8 bytes to represent the length of its body (value => nested fields).                                               |
+| 240         | EXTENSION_B_1_BYTES     | An extension B field using 1 extra byte to contain the extended field type.                                                                |
+| 241         | EXTENSION_B_2_BYTES     | An extension B field using 2 extra byte to contain the extended field type.                                                                |
+| 242         | EXTENSION_B_3_BYTES     | An extension B field using 3 extra byte to contain the extended field type.                                                                |
+| 243         | EXTENSION_B_4_BYTES     | An extension B field using 4 extra byte to contain the extended field type.                                                                |
+| 244         | EXTENSION_B_5_BYTES     | An extension B field using 5 extra byte to contain the extended field type.                                                                |
+| 245         | EXTENSION_B_6_BYTES     | An extension B field using 6 extra byte to contain the extended field type.                                                                |
+| 246         | EXTENSION_B_7_BYTES     | An extension B field using 7 extra byte to contain the extended field type.                                                                |
+| 247         | EXTENSION_B_8_BYTES     | An extension B field using 8 extra byte to contain the extended field type.                                                                |
+| 248         | EXTENSION_A_1_BYTES     | An extension A field using 1 extra byte to contain the extended field type.                                                                |
+| 249         | EXTENSION_A_2_BYTES     | An extension A field using 2 extra bytes to contain the extended field type.                                                               |
+| 250         | EXTENSION_A_3_BYTES     | An extension A field using 3 extra bytes to contain the extended field type.                                                               |
+| 251         | EXTENSION_A_4_BYTES     | An extension A field using 4 extra bytes to contain the extended field type.                                                               |
+| 252         | EXTENSION_A_5_BYTES     | An extension A field using 5 extra bytes to contain the extended field type.                                                               |
+| 253         | EXTENSION_A_6_BYTES     | An extension A field using 6 extra bytes to contain the extended field type.                                                               |
+| 254         | EXTENSION_A_7_BYTES     | An extension A field using 7 extra bytes to contain the extended field type.                                                               |
+| 255         | EXTENSION_A_8_BYTES     | An extension A field using 8 extra bytes to contain the extended field type.                                                               |
 
 
 
@@ -581,15 +651,64 @@ until the encoding for Extension fields has stabilized specification-wise.
 ## Extensions
 Extension fields are used to create your own custom fields with your own semantic meanings.
 
-Extension fields are marked with one of the extension field type codes, followed by an additional
-extended field type code which tells the actual semantic type code of that field.
+There to field extension series:
 
-The exact encoding of extension fields has not yet been 100% decided. There are currently 15
-extension field type codes, but maybe that will be changed to 16 (which will cause the metadata type code numeric 
-values to shift down 1 value).
+- A Series
+- B Series
 
-The Extensions type code numeric values currently go from 241 to and including 255 (but might change to
-240 to and including 255).
+The A series of extension fields are reserved for official extension fields - meaning fields added by future
+specifications of PDE. You should not use this series for your own extension fields (custom fields).
+
+The B series of extension fields are intended for you to use for your own, custom extension fields.
+
+Extension field type codes for the B series go from 240 to and including 247.
+
+Extension field type codes for the A series go from 248 to and including 255.
+
+
+Extension fields are marked with one of the extension field type codes (from series A or B), 
+followed by an additional extended field type code which tells the actual semantic type code of that field.
+
+Depending on what extension field type code you use - the following additional semantic type code is 
+represented using 1 to 8 bytes. This gives an extra 2^64 possible field type codes in both series A and B.
+
+The additional field type codes is intended to be thought of as one 2^64 sized type code space. 
+Thus, the 256 types available following the EXTENSION_B_1_BYTES (240) type code - should be considered
+equal to the bottom 256 values of the 65,535 possible values that can follow an EXTENSION_B_2_BYTES (241)
+type code, and equivalent of the bottom 256 values of the 16,777,216 possible that can follow an
+EXTENSION_B_3_BYTES (242) type code.
+
+For example, if whether your represented the additional type code 21 using 1 byte, or using 8 bytes
+(even if unnecessary) - you should consider it the same additional type code. 
+
+Theoretically, you could consider each of the extension field type codes as separate value spaces,
+resulting in a possible 2^64 + 2^56 + 2^48 + 2^40 + 2^32 + 2^24 + 2^16 + 2^8 sized type code space
+for each of series A and B. 
+
+Using that theoretic interpretation the additional type code value 21 represented
+using 1 byte (following an EXTENSION_B_1_BYTES (240) type code) would not be interpreted as the
+same semantic type code as if represented using 8 bytes (following an EXTENSION_B_8_BYTES (247) type code) -
+as these two additional type codes (21 represented using 1 byte and 8 bytes) would be interpreted as 
+belonging to separate extension type code spaces. 
+
+How you interpret the B series additional type codes is up to you - if they are defined by you.
+If defined by someone else you will have to follow their interpretation.
+
+The additional type codes in the A series should be interpreted as one big type code value space
+(for now at least). 2^64 additional possible type codes is a big enough number, that you should 
+not need the extra 2^56+ type codes resulting from interpreting each of these extension field type
+codes as separate value spaces (but you could - if you really, really needed it).
+
+Here are two PDE extension field encoding examples using hexadecimal notation:
+
+    F0 15 XX XX          # An EXTENSION_B_1_BYTES (240 / F0) field with additional type code of 21 (15). 
+                         # How the XX XX bytes are interpreted and how many bytes the value of that field is,
+                         # and whether some of those XX bytes are length bytes - is up to you to decide and interpret.
+
+    F3 15000000 XX XX    # An EXTENSION_B_4_BYTES (243 / F3) field with additional type code of 21 (15) 
+                         # represented using 4 bytes (little endian encoding). 
+                         # How the XX XX bytes are interpreted and how many bytes the value of that field is,
+                         # and whether some of those XX bytes are length bytes - is up to you to decide and interpret.
 
 
 ## Comments
@@ -599,7 +718,14 @@ Comment fields are used to contain comments about the data in the stream.
 Typically, comments would come from a Polymorph Data Language (PDL) file that was converted to Polymorph Data Encoding (PDE).
 The comments in that PDL file could then be retained in the PDE file (if desired).
 
-For now, there is no explicitly defined encoding for comments. I am still contemplating 
-whether comments should be implemented via metadata fields, or via extension fields.
+For now, there is no explicitly defined encoding for comments. 
+
+I am still contemplating whether comments should be implemented via metadata fields, or via extension fields.
+I am leaning towards metadata fields for now - as comments are not really "data" but more "metadata". 
+
+Similarly, metadata fields could be used to contain "white space" from PDL files - in case exact white space formatting
+from the PDL file was to be preserved within a PDE file 
+( - but do we really need that? ... for development purposes perhaps? )
+
 I do not think comments should be allowed to use the core type code numeric value space
 from 0 to 255. I would prefer to reserve those for more commonly transferred data types. 
