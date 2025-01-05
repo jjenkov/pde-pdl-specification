@@ -1,12 +1,38 @@
 # Polymorph Data Encoding (PDE) Specification
 
-Polymorph Data Encoding (PDE) is a binary data encoding that is versatile, flexible, compact and fast to read and write.
-Polymorph Data Encoding is an alternative to MessagePack, CBOR, Protobuf, ION, Avro and other binary data formats.
+Polymorph Data Encoding (PDE) is a binary data encoding that is
 
+- Versatile
+- Flexible
+- Compact
+- Fast to read and write.
+
+Polymorph Data Encoding is an alternative to 
+
+- MessagePack
+- CBOR
+- Protobuf
+- ION
+- Avro
+- Other binary data formats.
+- Other textual data formats such as
+  - CSV
+  - JSON
+  - YAML
+  - XML
+
+All in all, PDE has several features these data formats do not.
 
 See more about the purpose of PDE, and how PDE compares to other data formats, in the README file here:
 
 [README.md](README.md)
+
+
+## Polymorph Data Language
+Polymorph Data Language (PDL) is a textual encoding of the same data types that PDE can encode using a binary
+encoding. You can translate from PDL to PDE and reverse. You can read more about PDL here:
+
+[Polymorph Data Language (PDL) Specification.md](pdl-specification.md)
 
 
 ## PDE Tutorial
@@ -17,41 +43,106 @@ be fixed as fast as possible.
 [https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html](https://jenkov.com/tutorials/polymorph-data/polymorph-data-encoding.html)
 
 
-## PDE Files Are Streams of PDE Fields
+## PDE Fields
+Data encoded in PDE is encoded in "fields". 
 
-A PDE file (or stream) consists of a stream (sequence) of PDE fields. This is different from XML and JSON which
-consists of a single "document" (a single root XML element, or a single root JSON array or object). 
+A PDE field consists of:
 
-A PDE field contains a data value of a certain data type (field type).
+- Field type 
+- Field value
 
-Each field within a PDE file (or stream) is considered to have an offset. The offset represents the offset 
-of that field from the beginning of the file (or stream). The first PDE field has the offset 0.
-The next PDE field has the offset 1 etc. 
+PDE fields use a "type-length-value" encoding. This encoding is specified later in this document.
+
+Some PDE fields are atomic meaning the can contain only one value. 
+
+Other PDE fields are composite meaning they can contain nested PDE fields inside them.
+This is also explained in more detail later in this document.
+
+
+## PDE Metadata Fields
+PDE Metadata fields are fields that do not themselves contain raw data, but which tell something about
+the raw data fields following them. 
+
+For instance, a Metadata field might signal that the fields following it belong to a certain sub-stream of fields.
+Or, a Metadata field could signal a gap in the offset of the fields in the field stream (explained later).
+
+Metadata fields are not considered to have an offset within a PDE field stream, as they are not really part of
+the data itself - but only considered "signals" in between the data. Field offsets are explained later.
+
+PDE has a few Metadata fields specified that has an official meaning. Other than those, you can use
+Metadata fields to mean whatever you want. If you create your own Metadata fields, it is up to you 
+how you interpret them.
+
+
+
+## PDE Files And Streams
+
+A PDE file consists of a stream (sequence) of PDE fields. This is different from XML and JSON which
+consists of a single "document" (has a single root XML element, or a single root JSON array or object). 
+PDE files do not need to have only a single root field. They can have as many PDE fields at the root level as you want.
+
+A PDE stream is just like a PDE file. In fact, a PDE file is also a PDE stream. 
+The only difference between files and streams is where you get the PDE stream from. 
+A PDE stream you might get returned from a remote service call - or sent to you in an event notification - or similar.
+However, there is no functional difference to a PDE file.
+
+
+### Field Offsets in Streams
+Each field within a PDE stream (including files) is considered to have an offset. The offset represents the offset 
+of that field from the beginning of the stream (or file). The first PDE field has the offset 0.
+The next PDE field has the offset 1 etc.
+
+Here is an abstract (logical) example PDE field stream:
+
+    field1     # field with offset 0 
+    field2     # field with offset 1 
+    field3     # field with offset 2
 
 Only root level PDE fields have an offset. PDE fields nested within another PDE field are not considered
-to have stream level offsets.
+to have stream level offsets. 
+
+Here is an abstract (logical) example PDE field stream with fields containing nested fields:
+
+    field1     # field with offset 0
+        field1_1   # Nested field - no offset
+        field1_2   # Nested field - no offset
+    field2     # field with offset 1 
+        field2_1   # Nested field - no offset
+        field2_2   # Nested field - no offset
+    field3     # field with offset 2
+        field3_1   # Nested field - no offset
+        field3_2   # Nested field - no offset
 
 The offsets are not explicitly visible in the PDE file (or stream). They are implicit - and based on
 the offsets of the fields that preceded it in the file (or stream).
 
-It is possible to have offset gaps in a PDE stream. For instance, if a PDE stream represented a
-change log for a system, and you decide to create a snapshot of that stream - the resulting snapshot
-PDE field stream (or file) might have less PDE fields than the original - because some of the 
-fields from the original stream are now represented by a single field containing all the changes
-made to the abstract entity referenced by the replaced PDE fields.
+Note, that Metadata fields are not considered to have an offset, as they are merely considered "signals" between
+the PDE data fields - not data fields themselves.
 
-Offset gaps will be modeled using metadata fields - just like sub-stream IDs.
 
-PDE field offsets enable you to PDE field streams as a means of subscribing to changes
+### Offsets Enable Incremental Processing and Subscription   
+
+PDE field offsets enable you to use PDE field streams as a means of subscribing to changes
 either from the beginning of a PDE field stream (offset 0), or from the last offset you have already
 received (e.g. offset 4785).  
 
-Similarly, you could to partial / incremental processing of a PDE file. If you have already processed
+Similarly, you could do partial / incremental processing of a PDE file. If you have already processed
 up to offset N of a PDE file, you can continue from offset N+1 the next time you open the file.
 
 PDE field offsets also enable easy incremental replication of PDE files and streams between computers.
 
-Here is an abstract example of a PDE field stream:
+
+
+### Offset Gaps
+It is possible to have offset gaps in a PDE stream. For instance, if a PDE stream represented a
+change log for a system, and you decide to create a snapshot of that stream - the resulting snapshot
+PDE field stream (or file) might have less PDE fields than the original - because some of the
+fields from the original stream are now represented by a single field containing all the changes
+made to the abstract entity referenced by the replaced PDE fields.
+
+Offset gaps will be modeled using metadata fields.
+
+Here is an abstract example of a PDE field stream with an offset gap:
 
     field     # field with offset 0 
     field     # field with offset 1 
@@ -63,8 +154,14 @@ Here is an abstract example of a PDE field stream:
     field     # field with offset 12
 
 
+### Sub-streams
+A PDE stream can contain sub-streams. This simply means, that inside the bigger stream are 1 to N sub-streams
+which are to be considered their own, separate streams. However, for practical reasons they are all located
+within the same PDE stream. This could be the case where a remote service returns a single stream with 
+nested sub-streams inside, where each sub-stream represents some part of the remote service result.
+
 In case a PDE field stream contains sub-streams - the offsets of each PDE field should be interpreted 
-as being an offset within each sub-stream - not within the main multi-sub-stream stream. In other words,
+as being an offset within each sub-stream - not within the main super-stream. In other words,
 sub-streams have their own individual offsets. 
 
 Similarly, offset gaps within a sub-stream only count for that sub-stream - not for other sub-streams
@@ -105,37 +202,49 @@ An object PDE field is an example of a composite field. An object field can have
 Each PDE field are encoded in bytes using a field type, length and value. The type, length and value can all be read f
 rom the bytes in the PDE byte stream. No schema is needed.
 
+PDE field is encoded using one or more of the following parts:
+
+- **Field type code byte** (required)
+- **Length bytes** (optional)
+- **Value bytes** (optional)
+- **Extension type code bytes** (optional)
+
+Exactly which of the above parts are used in the encoding of a given PDE field depends on the 
+encoding scheme that field uses. You know from the field type code byte's numeric value what
+encoding scheme that field uses.
+
 PDE fields can use one of the following different encoding schemes:
 
-1) 1 byte
-2) 1 + N bytes
-3) 1 + L + N bytes
-4) 1 + (1 to 8) + [L] + N bytes
+1) **1 byte**
+2) **1 + N bytes**
+3) **1 + L + N bytes**
+4) **1 + (1 to 8) + [L] + N bytes**
 
 What these encodings mean, is explained in the following list:
 
-1) 1 field type byte that also implicitly tells its value (1 byte in total).
-2) 1 field type byte + N value bytes (1 + N bytes total).
-3) 1 field type byte + L length bytes + N value bytes (1 + L + N bytes in total).
-4) 1 extension field type byte + 1 to 8 field type bytes + whatever bytes are required for that extended field encoding.
-
-A PDE field always has a single byte (the type code) that tells the field type.  
-
-Depending on the value of the field type byte (its numerical value) you can deduct some information about the 
-length of the value of that field. Sometimes the value is implicit in the field type, so the field has no
-explicit value bytes. Sometimes the field type indicates the exact number of bytes of the value (its length).
-And sometimes the field type indicates a number of length bytes following the type byte, which contain the
-number of bytes of the value (its length). The only way to find it is to look at the numerical value of
-the field type byte, and consult this specification to see how that field type is encoded.
-
-(Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
-To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
-schemes - which I have not yet 100% decided on. I will get back and finish the design of extension field encodings 
-when I have analyzed it in more detail.)
+- Encoding 1: 1 field type code byte that also implicitly tells its value (1 byte in total).
+- Encoding 2: 1 field type code byte + N value bytes (1 + N bytes total).
+- Encoding 3: 1 field type code byte + L length bytes + N value bytes (1 + L + N bytes in total).
+- Encoding 4: 1 extension field code type byte + 1 to 8 field type code bytes + whatever bytes are required for that extended field encoding.
 
 This diagram sums up the PDE encoding variations:
 
 ![Polymorph Data Encodings](pde-encodings.png)
+
+A PDE field always has a single byte (the type code) that tells the field type.
+
+The numerical value of the field type code byte tells you which encoding scheme that field uses.
+You cannot see that directly from the numerical value itself. You have to look the encoding scheme up
+using the numerical value (or hardcode it into your code). The field encoding explanations later in this text
+tells exactly which encoding is used for each PDE field type.
+
+(Extension field encodings are a bit special. They are a way for you to add your own custom PDE fields to the stream of PDE fields.
+To make PDE field streams parseable without a schema, extension field encodings must follow some set of predetermined encoding
+schemes - which I have not yet 100% decided on. I will get back and finish the design of extension field encodings
+when I have analyzed it in more detail.)
+
+
+### PDE Field Encoding Examples
 
 Here are some PDE encoding examples in hexadecimal representation, showing
 
@@ -143,18 +252,27 @@ Here are some PDE encoding examples in hexadecimal representation, showing
 - A PDE field consisting of 1 byte (the field type code byte) and some value bytes
 - A PDE field consisting of 1 byte (the field type code byte), some length bytes and some value bytes
 
-Remember, all integers, floats etc. are encoded using little endian encoding, meaning the least significant byte of the number is the first byte in the sequence.
+Note: All integers, floats etc. are encoded using little endian encoding, meaning the least significant byte of the number is the first byte in the sequence.
+This means, that the hexadecimal value 0EA3 would actually be encoded starting with the A3 byte, as A30E . 
+
+Note: The text following a # is just a comment - not part of the data.
+
 
     # PDE fields that consists of only 1 byte
+
     00            # A boolean null field
     01            # A boolean true field
     02            # A boolean false field
 
+
     # PDE fields that consists of 1 type code byte and N value bytes
+
     04   A3       # A positive integer field with a 1 byte value
     05   A3 0E    # A positive integer field with a 2 byte value - little endian encoded ( => 0EA3 => 3747 in decimal)
 
-    # PDE field that consists of 
+
+    # PDE field that consists of 1 type code byte, L length bytes and N value bytes
+
     29   00 01   XX XX XX XX ...    # A bytes field with 2 length bytes (0 and 1 in little endian 
                                     # => 0100 as hex number => 256 in decimal) and the XX'es 
                                     # represents the value bytes (there should be 256 in total 
@@ -342,13 +460,13 @@ The first byte of a PDE field is the PDE field's type code. The available PDE fi
 | 238         | METADATA_7_LENGTH_BYTES | A metadata field using 7 bytes to represent the length of its body (value => nested fields).                                               |
 | 239         | METADATA_8_LENGTH_BYTES | A metadata field using 8 bytes to represent the length of its body (value => nested fields).                                               |
 | 240         | EXTENSION_B_1_BYTES     | An extension B field using 1 extra byte to contain the extended field type.                                                                |
-| 241         | EXTENSION_B_2_BYTES     | An extension B field using 2 extra byte to contain the extended field type.                                                                |
-| 242         | EXTENSION_B_3_BYTES     | An extension B field using 3 extra byte to contain the extended field type.                                                                |
-| 243         | EXTENSION_B_4_BYTES     | An extension B field using 4 extra byte to contain the extended field type.                                                                |
-| 244         | EXTENSION_B_5_BYTES     | An extension B field using 5 extra byte to contain the extended field type.                                                                |
-| 245         | EXTENSION_B_6_BYTES     | An extension B field using 6 extra byte to contain the extended field type.                                                                |
-| 246         | EXTENSION_B_7_BYTES     | An extension B field using 7 extra byte to contain the extended field type.                                                                |
-| 247         | EXTENSION_B_8_BYTES     | An extension B field using 8 extra byte to contain the extended field type.                                                                |
+| 241         | EXTENSION_B_2_BYTES     | An extension B field using 2 extra bytes to contain the extended field type.                                                               |
+| 242         | EXTENSION_B_3_BYTES     | An extension B field using 3 extra bytes to contain the extended field type.                                                               |
+| 243         | EXTENSION_B_4_BYTES     | An extension B field using 4 extra bytes to contain the extended field type.                                                               |
+| 244         | EXTENSION_B_5_BYTES     | An extension B field using 5 extra bytes to contain the extended field type.                                                               |
+| 245         | EXTENSION_B_6_BYTES     | An extension B field using 6 extra bytes to contain the extended field type.                                                               |
+| 246         | EXTENSION_B_7_BYTES     | An extension B field using 7 extra bytes to contain the extended field type.                                                               |
+| 247         | EXTENSION_B_8_BYTES     | An extension B field using 8 extra bytes to contain the extended field type.                                                               |
 | 248         | EXTENSION_A_1_BYTES     | An extension A field using 1 extra byte to contain the extended field type.                                                                |
 | 249         | EXTENSION_A_2_BYTES     | An extension A field using 2 extra bytes to contain the extended field type.                                                               |
 | 250         | EXTENSION_A_3_BYTES     | An extension A field using 3 extra bytes to contain the extended field type.                                                               |
@@ -559,6 +677,12 @@ How they bytes are interpreted (as binary values, ASCII characters or UTF-8 char
 is up to the user of the key field.
 
 The Key type code numeric values go from 125 to and including 143.
+
+Here are two key field encoding examples:
+
+    7F 4331  # Key field with the value "C1" (in ASCII)
+
+    7F 4332  # Key field with the value "C2" (in ASCII)
 
 
 ## Object
