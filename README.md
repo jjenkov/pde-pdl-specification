@@ -14,7 +14,7 @@ The Polymorph Data Language (PDL) specification can be found here:  [pdl-specifi
 
 ## PDE + PDL Implementations
 
-I have started an implementation of PDE (and later PDL) in Java in this GitHub repository:
+I have started implementing PDE and PDL writer and reader components in Java in this GitHub repository:
 
 [Polymorph Fabric - Java](https://github.com/jjenkov/polymorph-fabric-java)
 
