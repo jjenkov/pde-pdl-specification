@@ -12,6 +12,13 @@ The Polymorph Data Encoding (PDE) specification can be found here:  [pde-specifi
 The Polymorph Data Language (PDL) specification can be found here:  [pdl-specification.md](pdl-specification.md)
 
 
+## PDE + PDL Implementations
+
+I have started an implementation of PDE (and later PDL) in Java in this GitHub repository:
+
+[Polymorph Fabric - Java](https://github.com/jjenkov/polymorph-fabric-java)
+
+
 ## A Versatile, Flexible, Fast, Compact Data Format
 PDE + PDL is designed to be an expressive, flexible, fast, compact alternative to many of the otherwise commonly used data formats.
 
@@ -105,11 +112,7 @@ The field offsets can be used to only read fields from a given offset and forwar
 if you are reprocessing a file / stream, and you have already processed the first N records earlier.
 
 
-## Implementations
 
-I have started an implementation of PDE (and later PDL) in Java in this GitHub repository:
-
-[Polymorph Fabric - Java](https://github.com/jjenkov/polymorph-fabric-java)
 
 
 
