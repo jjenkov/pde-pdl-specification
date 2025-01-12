@@ -105,6 +105,12 @@ The field offsets can be used to only read fields from a given offset and forwar
 if you are reprocessing a file / stream, and you have already processed the first N records earlier.
 
 
+## Implementations
+
+I have started an implementation of PDE (and later PDL) in Java in this GitHub repository:
+
+[Polymorph Fabric - Java](https://github.com/jjenkov/polymorph-fabric-java)
+
 
 
 
