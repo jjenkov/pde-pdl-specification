@@ -73,6 +73,8 @@ Thus, a token could look like this:
 
 +123;
 
+The + tells that this is a positive integer token. The ; marks the end of that token.
+
 I will get into a bit more detail about POS0, POS1 and POS2 in the following sections.
 
 
