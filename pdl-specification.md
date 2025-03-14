@@ -80,7 +80,17 @@ I will get into a bit more detail about POS0, POS1 and POS2 in the following sec
 
 ### Parser Optimized Syntax 0
 
-As mentioned
+As mentioned above, the first parser optimized syntax I experimented with is the syntax I call 0 - 
+or Parser Optimized Syntax 0 (POS0).
+
+In POS0 the following is true for all tokens in the language:
+
+- The first character of a token specifies the token type.
+- All tokens end with a semicolon character (;) .
+- String tokens that would normally contain semicolon character within the token value - will need to escape the semicolon, so no semicolons occur anywhere else than as token end markers.
+
+
+
 
 
 
