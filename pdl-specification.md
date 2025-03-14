@@ -71,7 +71,7 @@ decision about the syntax - which resulted in Parser Optimized Syntax 0:
 
 Thus, a token could look like this:
 
-+123;
+    +123;
 
 The + tells that this is a positive integer token. The ; marks the end of that token.
 
@@ -89,10 +89,182 @@ In POS0 the following is true for all tokens in the language:
 - All tokens end with a semicolon character (;) .
 - String tokens that would normally contain semicolon character within the token value - will need to escape the semicolon, so no semicolons occur anywhere else than as token end markers.
 
+Using these three rules, I came up with the following syntax for POS0:
+
+    # single-line comment;
+    
+    !; !0; !1;
+    +123;
+    %123.45;
+    /123.45;
+    "Hello world;
+    @2030-12-31T23:59:59.999;
+    
+    {;.f1; +123; .f2; "val2;};
+    {;+123; "val2;};
+    
+    [;.c1; .c2; .c3;
+     +123; "val2; @2023;
+     +456; "val5; @2024; ];
+    
+    {; .name; "Aya;
+      .children; [;
+        .name; .children;
+        "Gretchen; [;
+          .name; .children;
+          "Rami; [;];
+          "Fana; [;];
+        ];
+        "Hansel; [;
+          .name; .children;
+          "Gordia; [;];
+          "Victor; [;];
+        ];
+      ];
+    };
+    
+    *id;(;+0;);
+    {; .name; "Parent;
+      .child; {;
+        .parent; *ref;(;+0;);
+      };
+    };
+    
+    *id;(;+0;);
+    {; .name; "mother;
+      .parent; o;
+      .children; [;
+        .name;     .parent;  .children;
+        "child1;  *ref;(;0;);   [;];
+        "child2;  *ref;(;0;);   [;];
+      ];
+    };
+
+
+As you can see, it is in some ways similar to JSON - but with a few differences. First of all, the first token type
+character is different. But - also the fact that all tokens are at least 2 characters long is a difference. Thus,
+objects and arrays are demarcated like this:
+
+    {;
+    };
+
+    [;
+    ];
+
+This is not a super beautiful syntax, nor as compact as it could be, but it has the advantage of being very easy and
+fast to tokenize. This is all the code needed tokenize the above script:
+
+    public void tokenizeMinified(Utf8Buffer buffer, TokenizerListener listener){
+        buffer.skipWhiteSpace();
+
+        while(buffer.hasMoreBytes()){
+            int tokenStartOffset = buffer.tempOffset;
+            buffer.tempOffset++;
+     
+            while(buffer.hasMoreBytes()){
+                if(buffer.nextCodepointAscii() == ';'){
+                    break;
+                }
+            }
+     
+            listener.token(tokenStartOffset, buffer.tempOffset, buffer.buffer[tokenStartOffset]);
+            buffer.skipWhiteSpace();
+        }
+    }
+
+This is only around 16 lines of code ! 
+
+Not only is this code easy to write - it also executes quite fast! Since there are not that many branches in this
+code, and the branches that are - are reasonably predictable especially for longer tokens - the execution speed of
+this tokenizer is pretty good. 
 
 
 
+### Parser Optimized Syntax 1
 
+The second parser optimized syntax I experimented with for PDL is what I call Parser Optimized Syntax 1 (POS1).
 
+The purpose of this syntax variation was to get object and array demarcations down to one character, like this:
+
+    {
+    }
+
+    [
+    ]
+
+Additionally, the named token syntax should also be abbreviated from
+
+    *id;(;+0;);
+    *ref;(;0;);
+
+to
+
+    *id(+0;)
+    *ref(+0;)
+
+Notice how the ( character is now used as the named token end marker - e.g. to mark the end of the *id(  token .
+Also notice how the ) character is now a single character token.
+
+This syntax variation looks more like what we are used to from JSON and JavaScript etc. 
+
+To tokenize this syntax variation reasonably easy and fast, I had to introduce a lookup table. 
+I use the token type character to lookup what character is used to mark the end of that token.
+
+Here is what the code looks like to tokenize the above syntax variation:
+
+public class PdlPfv2Tokenizer {
+
+    private static final byte[] tokenEndCharacters = new byte[128];
+
+    {
+        for(int i=0; i<tokenEndCharacters.length; i++) {
+            tokenEndCharacters[i] = ';';
+        }
+        tokenEndCharacters['{'] = '{';
+        tokenEndCharacters['}'] = '}';
+        tokenEndCharacters['['] = '[';
+        tokenEndCharacters[']'] = ']';
+        tokenEndCharacters['<'] = '<';
+        tokenEndCharacters['>'] = '>';
+        tokenEndCharacters['('] = '(';
+        tokenEndCharacters[')'] = ')';
+        tokenEndCharacters['*'] = '(';  //this is new compared to the PdlPfvTokenizer
+
+    }
+
+    public void tokenize(Utf8Buffer buffer, TokenizerListener listener) {
+        TokenIndex64Bit tokenIndex = (TokenIndex64Bit) listener;
+
+        buffer.skipWhiteSpace();
+        while(buffer.hasMoreBytes()){
+            int tokenStartOffset = buffer.tempOffset;
+            int endCharacter = tokenEndCharacters[buffer.buffer[tokenStartOffset]];
+
+            while(buffer.hasMoreBytes()){
+                if(buffer.nextCodepointAscii() == endCharacter){
+                    break;
+                }
+            }
+
+            listener.token(tokenStartOffset, buffer.tempOffset, buffer.buffer[tokenStartOffset]);
+            buffer.skipWhiteSpace();
+        }
+    }
+
+Notice how the token type character is now also examined to see if it is the token end marker character. 
+This means that for each token - one more character is checked. 
+
+The token type character double check is only a performance penalty for tokens that actually both have a token type character 
+and a separate end marker character. For these kinds of tokens the token type character gets checked 2 times and the
+token end marker character gets checked 1 time. That is 3 boundary checks per token.
+
+For the tokens where the token type character is also the token end marker character - 2 characters checks are performed
+(against the same character) just as if that token had consisted of 2 separate characters.
+That is only 2 boundary checks per token.
+
+This syntax is a bit slower to tokenize than POS0 - but the syntax is a bit easier to read and write.
+However, since some of the tokens require less characters to represent - you gain a little speed from 
+having fewer bytes to store, load or transport. Even with the saved characters this tokenizer is slower
+than the POS0 tokenizer.
 
 
