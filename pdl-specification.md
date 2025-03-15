@@ -184,7 +184,7 @@ this tokenizer is pretty good.
 
 The second parser optimized syntax I experimented with for PDL is what I call Parser Optimized Syntax 1 (POS1).
 
-The purpose of this syntax variation was to get object and array demarcations down to one character, like this:
+The purpose of the POS1 syntax variation was to get object and array demarcations down to one character, like this:
 
     {
     }
@@ -212,42 +212,43 @@ I use the token type character to lookup what character is used to mark the end 
 
 Here is what the code looks like to tokenize the above syntax variation:
 
-public class PdlPfv2Tokenizer {
-
-    private static final byte[] tokenEndCharacters = new byte[128];
-
-    {
-        for(int i=0; i<tokenEndCharacters.length; i++) {
-            tokenEndCharacters[i] = ';';
-        }
-        tokenEndCharacters['{'] = '{';
-        tokenEndCharacters['}'] = '}';
-        tokenEndCharacters['['] = '[';
-        tokenEndCharacters[']'] = ']';
-        tokenEndCharacters['<'] = '<';
-        tokenEndCharacters['>'] = '>';
-        tokenEndCharacters['('] = '(';
-        tokenEndCharacters[')'] = ')';
-        tokenEndCharacters['*'] = '(';  //this is new compared to the PdlPfvTokenizer
-
-    }
-
-    public void tokenize(Utf8Buffer buffer, TokenizerListener listener) {
-        TokenIndex64Bit tokenIndex = (TokenIndex64Bit) listener;
-
-        buffer.skipWhiteSpace();
-        while(buffer.hasMoreBytes()){
-            int tokenStartOffset = buffer.tempOffset;
-            int endCharacter = tokenEndCharacters[buffer.buffer[tokenStartOffset]];
-
-            while(buffer.hasMoreBytes()){
-                if(buffer.nextCodepointAscii() == endCharacter){
-                    break;
-                }
+    public class PdlPfv2Tokenizer {
+    
+        private static final byte[] tokenEndCharacters = new byte[128];
+    
+        {
+            for(int i=0; i<tokenEndCharacters.length; i++) {
+                tokenEndCharacters[i] = ';';
             }
-
-            listener.token(tokenStartOffset, buffer.tempOffset, buffer.buffer[tokenStartOffset]);
+            tokenEndCharacters['{'] = '{';
+            tokenEndCharacters['}'] = '}';
+            tokenEndCharacters['['] = '[';
+            tokenEndCharacters[']'] = ']';
+            tokenEndCharacters['<'] = '<';
+            tokenEndCharacters['>'] = '>';
+            tokenEndCharacters['('] = '(';
+            tokenEndCharacters[')'] = ')';
+            tokenEndCharacters['*'] = '(';  //this is new compared to the PdlPfvTokenizer
+    
+        }
+    
+        public void tokenize(Utf8Buffer buffer, TokenizerListener listener) {
+            TokenIndex64Bit tokenIndex = (TokenIndex64Bit) listener;
+    
             buffer.skipWhiteSpace();
+            while(buffer.hasMoreBytes()){
+                int tokenStartOffset = buffer.tempOffset;
+                int endCharacter = tokenEndCharacters[buffer.buffer[tokenStartOffset]];
+    
+                while(buffer.hasMoreBytes()){
+                    if(buffer.nextCodepointAscii() == endCharacter){
+                        break;
+                    }
+                }
+    
+                listener.token(tokenStartOffset, buffer.tempOffset, buffer.buffer[tokenStartOffset]);
+                buffer.skipWhiteSpace();
+            }
         }
     }
 
@@ -266,5 +267,90 @@ This syntax is a bit slower to tokenize than POS0 - but the syntax is a bit easi
 However, since some of the tokens require less characters to represent - you gain a little speed from 
 having fewer bytes to store, load or transport. Even with the saved characters this tokenizer is slower
 than the POS0 tokenizer.
+
+
+### Parser Optimized Syntax 2
+
+The third syntax variation I am currently experimenting with - I call Parser Optimized Syntax 2 (POS2).
+
+The purpose of the POS2 syntax variation is to get rid of the * type character in front of named tokens.
+Thus, the named token
+
+    *ref(+0;)
+
+would become
+
+    ref(+0;)
+
+Additionally, this syntax variation could be used to get rid of the + type character in front of positive integers,
+so the above named token parameter would be encoded like this:
+
+    ref(0;)
+
+This is one step closer to what we are used to from programming languages.
+
+To be able to tokenize this syntax and still determine the token type reasonably fast, one more
+lookup table lookup would need to be added. The real type of a token would have to be looked up
+by taking the first character in the token and looking up its actual type in a lookup table. 
+
+For tokens that still has a token type character in the beginning - the value stored in the lookup
+table will simply be the same as the first character of the token. Thus, for such tokens the lookup
+is actually wasted.
+
+For tokens that do not have a token type character in the beginning (named tokens and positive integer tokens) - 
+the value stored in the lookup table will be different from the first character of the token. This lookup will
+thus not be wasted.
+
+The lookup table will look something like this (not finalized):
+
+    byte[] tokenTypes = new byte[128];
+    
+    tokenTypes['a'] = '*';
+    ...
+    tokenTypes['z'] = '*';
+
+    tokenTypes['A'] = '*';
+    ...
+    tokenTypes['Z'] = '*';
+
+    tokenTypes['0'] = '+';
+    ...
+    tokenTypes['9'] = '+';
+
+Looking up the first character of the named token "ref(" will result in a lookup with the character 'r' as index.
+This will return the value '*' for that token type. 
+
+Similarly, looking up the first character of the positive integer token "678" will result in a lookup with the character
+'r' as index. This will return the value '+' for that token type.
+
+The lookup code will look something like this (not finalized):
+
+    int endCharacter = tokenEndCharacters[buffer.buffer[tokenStartOffset]];
+    int tokenType    = tokenTypes[buffer.buffer[tokenStartOffset]];
+
+This results in one extra lookup per token compared to the POS1 syntax - but saves the * and + characters in front
+of named tokens and positive integer tokens.
+
+Alternatively, the endCharacter and tokenType lookup tables could be merged into one big table. Instead of being
+2 tables of bytes - it could be one table of shorts (2 bytes). As you can see, the first character of a token is
+used as key in both tables - so the 2 lookups of 1 byte could be reduced to 1 lookup of 2 bytes. First byte (lsb)
+could contain the token type - and the second byte (msb) could contain the end character.
+
+With a merged lookup table the lookup code would something like this:
+
+    int endCharacter = typesAndEndCharacters[buffer.buffer[tokenStartOffset]];
+    int tokenType = endCharacter;
+
+    tokenType = 0xFF & tokenType;      //remove msb containing end character
+    endCharacter = endCharacter >> 8;  // remove lsb containing token type
+    
+Possibly, in assembly language you could move the endCharacter lookup value into a CPU register, and then only move
+the lsb from that register into another register that would now contain the token type (only the lsb). That might be
+slightly faster (1 instruction less) than first copying the whole endCharacter register (with the combined value)
+to another register, and then AND the msb byte out.
+
+As mentioned, the POS2 syntax variation is not finalized and has not been tested (implemented) nor benchmarked.
+More info will be added when this work has been carried out.
+
 
 
