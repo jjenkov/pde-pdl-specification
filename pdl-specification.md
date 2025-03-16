@@ -370,6 +370,29 @@ and shows how they would look in the different syntax variations suggested so fa
 Note: As PDL is designed for streaming of data - there is no "root" token or root "object" - like you would normally
 have in JSON or XML.
 
+### Token Type Characters
+Here is a shorthand list of the token type characters used for different token types.
+The token type character is the first character of a token.
+
+| Character | Token Type                    | Token Examples            |
+|-----------|-------------------------------|---------------------------|
+| #         | Comments                      | #This is a comment;       |
+| !         | Booleans                      | !0; !1; !2;               |
+| +         | Positive integers             | +123;                     |
+| -         | Negative integers             | -123;                     |
+| %         | 32-bit floating point numbers | %123.45; %-123.45;        |
+| /         | 64-bit floating point numbers | /567.89; /-567.89;        |
+| '         | ASCII text                    | 'ASCII chars;             |
+| "         | UTF-8 text                    | "UTF-8 chars;             |
+| @         | UTC date and time             | @2030-12-31T23:59:59.999; |
+| .         | Keys                          | .key1; .column2;          |
+| {         | Object begin                  | {; {                      |
+| }         | Object end                    | }; }                      |
+| [         | Table begin                   | [; [                      |
+| ]         | Table end                     | ]; ]                      |
+| *         | Named tokens                  | *id(+123;) *ref(+123;)    |
+
+
 
 ### Comments
 Comment tokens are intended for inserting comments into the PDL documents. YAML and XML has comments, but JSON 
@@ -408,12 +431,25 @@ to handle more easily for you.
 I guess that in some situations it can also make it easier to comment out a single token in the middle of a line,
 because you just have to put a # character in front of that token and it becomes a comment.
 
+Alternatively, comments could use a different end character in POS1 and POS2 than other tokens. For instance,
+the ~ character - which is not often used in other tokens (except occasionally in ASCII or UTF-8 tokens).
+This way you could more easily comment out a larger section of PDL tokens - but commenting out a single PDL
+token then requires more work - as it has to be surrounded by a # and ~ character, instead of just having
+a # character put in front of it.
+
+Maybe there needs to be single token comments and a multi-token comments... That is an option
+to look at in the future.
+
 Regardless of this syntax "disadvantage" - it is better to have comments available than not having comments
 available at all like in JSON. Also, having the comment syntax conform to the general token syntax structure
 makes a tokenizer much easier to implement.
 
+Comments cannot have null values.
+
 
 ### Boolean
+
+
 ### Integers
 ### Floating Point Numbers
 ### ASCII Text
