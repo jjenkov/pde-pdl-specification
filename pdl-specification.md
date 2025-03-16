@@ -361,16 +361,7 @@ More info will be added when this work has been carried out.
 
 
 
-## Token Types
-
-Polymorph Data Language has a set of token types that is should be able to represent - regardless of which syntax
-variation that is used (which one becomes the final one is not yet decided). This section lists the token types
-and shows how they would look in the different syntax variations suggested so far.
-
-Note: As PDL is designed for streaming of data - there is no "root" token or root "object" - like you would normally
-have in JSON or XML.
-
-### Token Type Characters
+## Token Type Characters
 Here is a shorthand list of the token type characters used for different token types.
 The token type character is the first character of a token.
 
@@ -392,6 +383,15 @@ The token type character is the first character of a token.
 | ]         | Table end                     | ]; ]                      |
 | *         | Named tokens                  | *id(+123;) *ref(+123;)    |
 
+
+## Token Types
+
+Polymorph Data Language has a set of token types that is should be able to represent - regardless of which syntax
+variation that is used (which one becomes the final one is not yet decided). This section lists the token types
+and shows how they would look in the different syntax variations suggested so far.
+
+Note: As PDL is designed for streaming of data - there is no "root" token or root "object" - like you would normally
+have in JSON or XML.
 
 
 ### Comments
