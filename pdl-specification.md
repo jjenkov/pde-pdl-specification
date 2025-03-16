@@ -18,6 +18,7 @@ See more about how PDL compares to other data formats in the README file here:
 - Polymorph Data Language Use Cases
 - Syntax Variations and Performance
 - Syntax Designs
+- Token Type Characters
 - Token Types
 
 
@@ -365,23 +366,23 @@ More info will be added when this work has been carried out.
 Here is a shorthand list of the token type characters used for different token types.
 The token type character is the first character of a token.
 
-| Character | Token Type                    | Token Examples            |
-|-----------|-------------------------------|---------------------------|
-| #         | Comments                      | #This is a comment;       |
-| !         | Booleans                      | !0; !1; !2;               |
-| +         | Positive integers             | +123;                     |
-| -         | Negative integers             | -123;                     |
-| %         | 32-bit floating point numbers | %123.45; %-123.45;        |
-| /         | 64-bit floating point numbers | /567.89; /-567.89;        |
-| '         | ASCII text                    | 'ASCII chars;             |
-| "         | UTF-8 text                    | "UTF-8 chars;             |
-| @         | UTC date and time             | @2030-12-31T23:59:59.999; |
-| .         | Keys                          | .key1; .column2;          |
-| {         | Object begin                  | {; {                      |
-| }         | Object end                    | }; }                      |
-| [         | Table begin                   | [; [                      |
-| ]         | Table end                     | ]; ]                      |
-| *         | Named tokens                  | *id(+123;) *ref(+123;)    |
+| Character | Token Type                    | Token Examples               |
+|-----------|-------------------------------|------------------------------|
+| #         | Comments                      | #This is a comment;          |
+| !         | Booleans                      | !0; !1; !2;                  |
+| +         | Positive integers             | +123;                        |
+| -         | Negative integers             | -123;                        |
+| %         | 32-bit floating point numbers | %123.45; %-123.45;           |
+| /         | 64-bit floating point numbers | /567.89; /-567.89;           |
+| '         | ASCII text                    | 'ASCII chars;                |
+| "         | UTF-8 text                    | "UTF-8 chars;                |
+| @         | UTC date and time             | @2030-12-31T23:59:59.999;    |
+| .         | Keys                          | .key1; .column2; .property3; |
+| {         | Object begin                  | {; {                         |
+| }         | Object end                    | }; }                         |
+| [         | Table begin                   | [; [                         |
+| ]         | Table end                     | ]; ]                         |
+| *         | Named tokens                  | *id(+123;) *ref(+123;)       |
 
 
 ## Token Types
@@ -448,9 +449,22 @@ Comments cannot have null values.
 
 
 ### Boolean
+A boolean PDL token represents a boolean PDL field which can be either null, true or false. So far there is
+no difference in how a boolean field is represented in PDL in the different syntax variances. Here are
+three examples showing a null, true and false boolean PDL token (field):
+
+    !0;    
+    !1;
+    !2;
+
+The ! character is the token type character for boolean tokens (fields). The value 0 represents a boolean field
+with the value null. The value 1 represents a boolean field with the value true. The 2 represents a boolean field
+with the value false.
 
 
 ### Integers
+
+
 ### Floating Point Numbers
 ### ASCII Text
 ### UTF-8 Text
