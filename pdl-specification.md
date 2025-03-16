@@ -13,6 +13,13 @@ See more about how PDL compares to other data formats in the README file here:
 [README.md](README.md)
 
 
+## Table of Contents
+
+- Polymorph Data Language Use Cases
+- Syntax Variations and Performance
+- Syntax Designs
+- Token Types
+
 
 ## Polymorph Data Language Use Cases 
 
@@ -228,7 +235,7 @@ Here is what the code looks like to tokenize the above syntax variation:
             tokenEndCharacters['>'] = '>';
             tokenEndCharacters['('] = '(';
             tokenEndCharacters[')'] = ')';
-            tokenEndCharacters['*'] = '(';  //this is new compared to the PdlPfvTokenizer
+            tokenEndCharacters['*'] = '(';  
     
         }
     
@@ -352,5 +359,71 @@ to another register, and then AND the msb byte out.
 As mentioned, the POS2 syntax variation is not finalized and has not been tested (implemented) nor benchmarked.
 More info will be added when this work has been carried out.
 
+
+
+## Token Types
+
+Polymorph Data Language has a set of token types that is should be able to represent - regardless of which syntax
+variation that is used (which one becomes the final one is not yet decided). This section lists the token types
+and shows how they would look in the different syntax variations suggested so far.
+
+Note: As PDL is designed for streaming of data - there is no "root" token or root "object" - like you would normally
+have in JSON or XML.
+
+
+### Comments
+Comment tokens are intended for inserting comments into the PDL documents. YAML and XML has comments, but JSON 
+and CSV does not have a standard comment format. Comments are useful e.g. in test data documents and in configuration files.
+
+A PDL comment token would look like this:
+
+POS0:
+
+    #This is a comment;
+
+POS1:
+
+    #This is a comment;
+
+POS2:
+
+    #This is a comment;
+
+One disadvantage of this comment format is, if you need to comment out a section of PDL tokens. Since the comment
+token has the same end marker character as many other tokens, you will end up having to comment out each token
+by itself, like this: 
+
+POS0:
+
+    #This is a single-token comment;
+
+    #+123; 
+    #/789.00;
+    #"This is a text;
+
+Notice how each of the tokens below the first comment token must be commented out individually, since each of them
+ends with a ; which marks the end of a comment token too. This is annoying - but something an editor would be able
+to handle more easily for you.
+
+I guess that in some situations it can also make it easier to comment out a single token in the middle of a line,
+because you just have to put a # character in front of that token and it becomes a comment.
+
+Regardless of this syntax "disadvantage" - it is better to have comments available than not having comments
+available at all like in JSON. Also, having the comment syntax conform to the general token syntax structure
+makes a tokenizer much easier to implement.
+
+
+### Boolean
+### Integers
+### Floating Point Numbers
+### ASCII Text
+### UTF-8 Text
+### UTC Date and Time
+### Copy
+### Reference
+### Key
+### Object
+### Table
+### Metadata
 
 
