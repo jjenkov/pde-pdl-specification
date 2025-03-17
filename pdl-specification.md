@@ -486,9 +486,28 @@ A negative integer is encoded using the - character as type character, like this
     -123;
 
 
-
-
 ### Floating Point Numbers
+A floating point PDL token represents a floating point number. PDL enables you to represent both 32 bit and 64 bit
+floating point numbers. The 32 bit floating point tokens use the % character as type character. 
+The 64-bit floating point tokens use the / character as type character. 
+
+Representing a null floating point character is done using either the % or / character, followed directly by a semi-colon.
+Here are two examples of how a null floating point token could look;
+
+    %;
+    /;
+
+Here are some example 32 bit floating point tokens:
+
+    %123.45;
+    %-123.45;
+
+Here are some example 64 bit floating point tokens:
+
+    /456.789;
+    /-456.789;
+
+
 ### ASCII Text
 ### UTF-8 Text
 ### UTC Date and Time
