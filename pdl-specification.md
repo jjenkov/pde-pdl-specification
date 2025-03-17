@@ -463,6 +463,29 @@ with the value false.
 
 
 ### Integers
+An integer PDL token represents an integer PDL field. Integers can have either null, positive or negative integer values.
+
+A null integer value is represented like this:
+
+    +;
+
+Notice the + marking a positive integer value - immediately followed by the ; character, signaling that this integer
+value is empty (null).
+
+A positive integer will be encoded like this:
+
+    +123;
+
+Using the POS2 syntax it might be possible to omit the + in front of positive integer tokens.
+In that case, they would be encoded like this:
+
+    123;
+
+A negative integer is encoded using the - character as type character, like this:
+
+    -123;
+
+
 
 
 ### Floating Point Numbers
