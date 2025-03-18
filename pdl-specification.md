@@ -509,8 +509,58 @@ Here are some example 64 bit floating point tokens:
 
 
 ### ASCII Text
+An ASCII text PDL token represents an ASCII text field. Sometimes it is useful to tell a consumer of data
+that a string of text is only ASCII characters (exactly 1 byte per character) so they do not need to 
+parse each character as an UTF-8 character.
+
+The ASCII PDL token uses the ' character as token type character.
+
+Representing a null ASCII PDL token looks like this:
+
+    ';
+
+Notice how the ' character is immediately followed by the ; character.
+
+Representing a PDL ASCII text token looks like this:
+
+    'This is an ASCII text;
+
+
+
 ### UTF-8 Text
+A UTF-8 text PDL token represents a UTF-8 text field. Sometimes it is useful to tell a consumer of data
+that a string of text is UTF-8 characters (possibly more than 1 byte per character) so they need to
+parse each character as an UTF-8 character.
+
+The UTF-8 PDL token uses the " character as token type character.
+
+Representing a null UTF-8 PDL token looks like this:
+
+    ";
+
+Notice how the " character is immediately followed by the ; character.
+
+Representing a PDL UTF-8 text token looks like this:
+
+    "This is a UTF-8 text;
+
+
 ### UTC Date and Time
+The UTC PDL token represents a date and time in UTC format (no time zones allowed). 
+The UTC PDL token uses the @ character as type character. The UTC token can contain
+year - or year + month + date + hour + minute + seconds + milliseconds - or anywhere
+date + time in between. Here are all the allowed formats:
+
+    @2030;
+    @2030-12;
+    @2030-12-31;
+    @2030-12-31T23;
+    @2030-12-31T23:59;
+    @2030-12-31T23:59:59;
+    @2030-12-31T23:59:59.999;
+
+
+
 ### Copy
 ### Reference
 ### Key
