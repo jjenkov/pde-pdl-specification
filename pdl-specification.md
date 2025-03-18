@@ -401,23 +401,11 @@ and CSV does not have a standard comment format. Comments are useful e.g. in tes
 
 A PDL comment token would look like this:
 
-POS0:
-
-    #This is a comment;
-
-POS1:
-
-    #This is a comment;
-
-POS2:
-
     #This is a comment;
 
 One disadvantage of this comment format is, if you need to comment out a section of PDL tokens. Since the comment
 token has the same end marker character as many other tokens, you will end up having to comment out each token
 by itself, like this: 
-
-POS0:
 
     #This is a single-token comment;
 
@@ -564,8 +552,52 @@ date + time in between. Here are all the allowed formats:
 ### Copy
 ### Reference
 ### Key
+
+
+    .key1; .key2; .key3; 
+    .col1; .col2; .col3; 
+    .property1; .property2 .property3;
+
+
 ### Object
+
+POS0:
+
+    {;
+    };
+
+POS1:
+
+    {
+    }
+
+
 ### Table
+
+POS0:
+
+    [;
+    ];
+
+POS1:
+
+    [
+    ]
+
 ### Metadata
 
 
+### Named Tokens
+
+POS0:
+
+    *ref;(;+123;);
+    *ref(;+123;);     #This is 1 token shorter... and should be possible with POS0 syntax.;
+
+POS1:
+
+    *ref(+123;)
+
+POS2:
+
+    ref(123;)
