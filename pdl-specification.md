@@ -437,7 +437,7 @@ Comments cannot have null values.
 
 
 ### Boolean
-A boolean PDL token represents a boolean PDL field which can be either null, true or false. So far there is
+A PDL boolean token represents a boolean PDL field which can be either null, true or false. So far there is
 no difference in how a boolean field is represented in PDL in the different syntax variances. Here are
 three examples showing a null, true and false boolean PDL token (field):
 
@@ -451,7 +451,7 @@ with the value false.
 
 
 ### Integers
-An integer PDL token represents an integer PDL field. Integers can have either null, positive or negative integer values.
+A PDL integer token represents an integer PDL field. Integers can have either null, positive or negative integer values.
 
 A null integer value is represented like this:
 
@@ -475,7 +475,7 @@ A negative integer is encoded using the - character as type character, like this
 
 
 ### Floating Point Numbers
-A floating point PDL token represents a floating point number. PDL enables you to represent both 32 bit and 64 bit
+A PDL floating point token represents a floating point number. PDL enables you to represent both 32 bit and 64 bit
 floating point numbers. The 32 bit floating point tokens use the % character as type character. 
 The 64-bit floating point tokens use the / character as type character. 
 
@@ -497,7 +497,7 @@ Here are some example 64 bit floating point tokens:
 
 
 ### ASCII Text
-An ASCII text PDL token represents an ASCII text field. Sometimes it is useful to tell a consumer of data
+A PDL ASCII text  token represents an ASCII text field. Sometimes it is useful to tell a consumer of data
 that a string of text is only ASCII characters (exactly 1 byte per character) so they do not need to 
 parse each character as an UTF-8 character.
 
@@ -516,7 +516,7 @@ Representing a PDL ASCII text token looks like this:
 
 
 ### UTF-8 Text
-A UTF-8 text PDL token represents a UTF-8 text field. Sometimes it is useful to tell a consumer of data
+A PDL UTF-8 text token represents a UTF-8 text field. Sometimes it is useful to tell a consumer of data
 that a string of text is UTF-8 characters (possibly more than 1 byte per character) so they need to
 parse each character as an UTF-8 character.
 
@@ -534,7 +534,7 @@ Representing a PDL UTF-8 text token looks like this:
 
 
 ### UTC Date and Time
-The UTC PDL token represents a date and time in UTC format (no time zones allowed). 
+The PDL UTC token represents a date and time in UTC format (no time zones allowed). 
 The UTC PDL token uses the @ character as type character. The UTC token can contain
 year - or year + month + date + hour + minute + seconds + milliseconds - or anywhere
 date + time in between. Here are all the allowed formats:
@@ -552,7 +552,12 @@ date + time in between. Here are all the allowed formats:
 ### Copy
 ### Reference
 ### Key
+The PDL key token is used to represent a property name inside a PDL object field (e.g. "property1") or a column name inside
+a PDL table field (e.g. "column1"). The PDL key token uses the . character as token type character. 
 
+Key tokens with null values are not allowed - as it does not really make sense to have a null key.
+
+Here are some examples of PDL key tokens:
 
     .key1; .key2; .key3; 
     .col1; .col2; .col3; 
@@ -560,6 +565,11 @@ date + time in between. Here are all the allowed formats:
 
 
 ### Object
+PDL object fields are demarcated by 2 tokens. An object begin token and an object end token.
+The token type character for the object begin token is the { character. 
+The token type character for the object end token is the } character. 
+
+Here are some examples of PDL object begin and object end tokens using different syntax suggestions:
 
 POS0:
 
@@ -571,8 +581,18 @@ POS1:
     {
     }
 
+Here are some PDL object fields with nested fields inside using POS1 syntax:
+
+    { .firstName; "Jane; .lastName; "Doe; }
+    { .nanme; "John Doe; .birthday; @1999-01-16; }
+
 
 ### Table
+PDL table fields are demarcated by 2 tokens. A table begin token and a table end token.
+The token type character for the table begin token is the [ character.
+The token type character for the table end token is the ] character.
+
+Here are some PDL table begin and end tokens using different syntax suggestions:
 
 POS0:
 
@@ -583,6 +603,38 @@ POS1:
 
     [
     ]
+
+Here are some PDL table fields with nested fields inside using POS1 syntax:
+
+    [ .firstName; .lastName;
+      "Jane;      "Doe;
+      "John;      "Doe;
+      "Joe;       "Blocks;
+    ]
+
+    [ .name; .birthday;
+      "Jane Doe;   @1999-01-16;
+      "John Doe;   @1995-09-18;
+      "Joe Blocks; @1993-03-23; 
+    ]
+
+It is possible nest tables inside tables. This can be used to represent tree structures more compactly.
+Here is a nested PDL table example using POS1 syntax:
+
+    [
+      .name; .children;
+      "Gretchen; [
+        .name; .children;
+        "Rami; []
+        "Fana; []
+      ]
+      "Hansel; [
+        .name; .children;
+        "Gordia; []
+        "Victor; []
+      ]
+    ]
+
 
 ### Metadata
 
