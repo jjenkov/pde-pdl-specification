@@ -640,16 +640,34 @@ Here is a nested PDL table example using POS1 syntax:
 
 
 ### Named Tokens
+A PDL named token is used to represent fields that do not have their own special token type character.
+Instead the name of a named token tells what kind of token it is. Thus, named tokens are more verbose than tokens
+that use token type characters.
+
+A named token uses the * as token type character. However, this only tells the tokenizer that this is a named token.
+It does not tell the tokenizer what the actual token type is - which this token should represent. This must be
+deduced from the name following the * character. 
+
+Here are some example PDL named tokens using different syntax suggestions:
 
 POS0:
 
+    *id;(;+123;);
+    *id(;+123;);   #This is 1 token shorter... and should be possible with POS0 syntax.;
+
     *ref;(;+123;);
-    *ref(;+123;);     #This is 1 token shorter... and should be possible with POS0 syntax.;
+    *ref(;+123;);  #This is 1 token shorter... and should be possible with POS0 syntax.;
 
 POS1:
+
+    *id(+123;)
 
     *ref(+123;)
 
 POS2:
 
+    id(123;)
+
     ref(123;)
+
+
