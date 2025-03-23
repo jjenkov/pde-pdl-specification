@@ -382,6 +382,8 @@ The token type character is the first character of a token.
 | }         | Object end                    | }; }                         |
 | [         | Table begin                   | [; [                         |
 | ]         | Table end                     | ]; ]                         |
+| <         | Metadata begin                | <; <                         |
+| >         | Metadata end                  | >; >                         |
 | *         | Named tokens                  | *id(+123;) *ref(+123;)       |
 
 
@@ -637,6 +639,31 @@ Here is a nested PDL table example using POS1 syntax:
 
 
 ### Metadata
+A PDL metadata field contains metadata about the data in the PDL stream. What the metadata means semantically
+is up to you to decide.  
+
+A PDL metadata field is structurally similar to a PDL object. 
+A PDL metadata field consists of a metadata start token < and a metadata end token > . 
+Here is an example PDL metadata field:
+
+    < .type; "Customer; >
+
+
+A PDL metadata field typically precedes the PDL fields it belongs to.
+Here is an example of a PDL metadata field belonging to a PDL object field:
+
+    < .class; "com.company.project.product.Customer; >
+
+    { .name; "John Doe";
+      .customerId; 12345;
+    }
+
+In the above example the PDL metadata field contains the Java class name of the PDL object following it.
+In other words, the metadata field signals that the object field was serialized from an object 
+of the class com.company.project.product.Customer. 
+
+Note: There are currently no predefined semantic meanings of metadata. It is up to you to decide what they mean.
+I might introduce predefined semantic meanings of some metadata fields in the future. 
 
 
 ### Named Tokens
