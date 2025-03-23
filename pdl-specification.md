@@ -389,7 +389,7 @@ The token type character is the first character of a token.
 | [         | Table begin                   | [; [                         |
 | ]         | Table end                     | ]; ]                         |
 | <         | Metadata begin                | <; <                         |
-| >         | Metadata end                  | >; >                         |
+| \>        | Metadata end                  | \>; >                        |
 | *         | Named tokens                  | *id(+123;) *ref(+123;)       |
 
 
