@@ -369,6 +369,9 @@ The token type character is the first character of a token.
 | Character | Token Type                    | Token Examples               |
 |-----------|-------------------------------|------------------------------|
 | #         | Comments                      | #This is a comment;          |
+| :         | Binary data in hexadecimal    | :123A 44E3;                  |
+| \|        | Binary data in base64         | \|QmFzZTY0IGRhdGE=;          |
+| ^         | Binary data in UTF-8          | ^Binary data in UTF-8;       |
 | !         | Booleans                      | !0; !1; !2;                  |
 | +         | Positive integers             | +123;                        |
 | -         | Negative integers             | -123;                        |
