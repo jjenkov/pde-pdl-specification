@@ -380,6 +380,9 @@ The token type character is the first character of a token.
 | '         | ASCII text                    | 'ASCII chars;                |
 | "         | UTF-8 text                    | "UTF-8 chars;                |
 | @         | UTC date and time             | @2030-12-31T23:59:59.999;    |
+| $         | ID                            | $obj1;                       |
+| =         | Copy of another field         | =obj1;                       |
+| &         | Reference to another field    | &obj1;                       |
 | .         | Keys                          | .key1; .column2; .property3; |
 | {         | Object begin                  | {; {                         |
 | }         | Object end                    | }; }                         |
