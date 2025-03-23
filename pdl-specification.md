@@ -438,6 +438,31 @@ makes a tokenizer much easier to implement.
 Comments cannot have null values.
 
 
+### Binary
+A PDL binary token represents binary data encoded using a textual representation. PDL supports 3 different
+textual representations for binary data:
+
+1) Hexadecimal encoding
+2) Base64 encoding
+3) UTF-8 encoding
+
+Each of these are represented using a different token type character. Here are some example PDL binary field
+tokens:
+
+    :45A6 34E3;
+
+    |VGhpcyBpcyBiYXNlNjQgZW5jb2RlZA==;
+
+    ^This is binary data in UTF-8 encoding;
+
+The : character is the token type character for binary data encoded using hexadecimal encoding (white spaces allowed between digits).
+
+The | character is the token type character for binary data encoded using base64 encoding.
+
+The ^ character is the token type character for binary data encoded using UTF-8 encoding.
+
+
+
 ### Boolean
 A PDL boolean token represents a boolean PDL field which can be either null, true or false. So far there is
 no difference in how a boolean field is represented in PDL in the different syntax variances. Here are
@@ -644,7 +669,13 @@ is up to you to decide.
 
 A PDL metadata field is structurally similar to a PDL object. 
 A PDL metadata field consists of a metadata start token < and a metadata end token > . 
-Here is an example PDL metadata field:
+
+
+Here is an example PDL metadata field in POS0 syntax:
+
+    <; .type; "Customer; >;
+
+Here is an example PDL metadata field in POS1 syntax:
 
     < .type; "Customer; >
 
