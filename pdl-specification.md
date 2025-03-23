@@ -578,9 +578,73 @@ date + time in between. Here are all the allowed formats:
     @2030-12-31T23:59:59.999;
 
 
+### ID
+The PDL ID token represents an identifier you can reference via copy or reference field. 
+The PDL ID token does not correspond to a field in PDE. Instead, an ID token represents
+an "address" (offset) that you can reference from a copy or reference field.
+
+The PDL ID token uses the $ character as token type character.
+
+Here is how a PDL ID token looks:
+
+    $obj1;
+
+The ID token points to the PDL field immediately following the ID token. 
+Here is a PDL ID token example:
+
+    $obj1;
+    { .name; "John Doe; }
+
+In the above example the $obj1; field points to the following PDL object field.
+
+See more info in the Copy and Reference fields for how to reference an ID field.
+
 
 ### Copy
+The PDL copy token references an ID token earlier in the PDL script (it must be EARLIER - no forward references allowed).
+The PDL copy token represents a "copy" of the PDL field immediately following the referenced ID field.
+
+The PDL copy token uses the = character as token type character.
+Here is a PDL copy token example:
+
+    $obj1;
+    { .name; "John Doe; }
+
+    =obj1;
+
+The copy field is useful if you have to repeat the same field multiple times in a PDL stream. Instead of
+repeating the field - you can include it once and include copy fields pointing to the original.
+
+
 ### Reference
+The PDL reference token references an ID token earlier in the PDL script (it must be EARLIER - no forward references allowed).
+The PDL reference token represents a "reference" to the PDL field immediately following the referenced ID field.
+
+The PDL reference token uses the & character as token type character.
+Here is a PDL copy token example:
+
+    $obj1;
+    { .name; "John Doe; }
+
+    { .name; "Jane Doe; .spouse;  &obj1; }
+
+The PDL reference field is useful when you need to encode object graphs where one object references another.
+
+PDL reference fields can also be used to represent cyclic object graphs. 
+Here is an example of a cyclic object graph:
+
+    $obj1;
+    { .name; "John Doe; 
+      .children; [
+          { .name; "Phillis Doe; .parent;  &obj1; }
+          { .name; "Aron Doe;    .parent;  &obj1; }
+      ]
+    }
+
+Notice how the parent object references the two child objects via its nested table (without column names => array).
+Notice also how both of the child objects reference the parent object via reference fields. This is a cyclic object graph.
+
+
 ### Key
 The PDL key token is used to represent a property name inside a PDL object field (e.g. "property1") or a column name inside
 a PDL table field (e.g. "column1"). The PDL key token uses the . character as token type character. 
