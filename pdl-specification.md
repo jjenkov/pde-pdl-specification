@@ -368,6 +368,7 @@ The token type character is the first character of a token.
 
 | Character | Token Type                    | Token Examples                   |
 |-----------|-------------------------------|----------------------------------|
+| _         | Null                          | _"; _!; _+;                      |
 | #         | Single-token comments         | #This is a single-token comment; |
 | *         | Multi-token comments          | *This is a multi-token comment~  |
 | $         | Binary data in hexadecimal    | $123A 44E3;                      |
@@ -402,6 +403,31 @@ and shows how they would look in the different syntax variations suggested so fa
 
 Note: As PDL is designed for streaming of data - there is no "root" token or root "object" - like you would normally
 have in JSON or XML.
+
+
+### Null Values
+A PDL null token represents a null value. PDL null tokens use the _ character as type character and the ; character
+as end marker character. 
+
+Between the _ and the ; characters you put the type character of the type you want the null
+to represent. In other words, PDL uses typed nulls. 
+
+Here is an example PDL null token of the UTF-8 field type:
+
+    _";
+
+Here is an example PDL null token of the named token type:
+
+    _specialField;
+
+
+There are some PDL tokens (fields) it does not make sense to have null values for. These are:
+
+- Nulls
+- Comments
+- Keys
+- Metadata
+
 
 
 ### Comments
