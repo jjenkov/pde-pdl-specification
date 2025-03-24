@@ -369,7 +369,7 @@ The token type character is the first character of a token.
 | Character | Token Type                    | Token Examples               |
 |-----------|-------------------------------|------------------------------|
 | #         | Comments                      | #This is a comment;          |
-| :         | Binary data in hexadecimal    | :123A 44E3;                  |
+| $         | Binary data in hexadecimal    | $123A 44E3;                  |
 | \|        | Binary data in base64         | \|QmFzZTY0IGRhdGE=;          |
 | ^         | Binary data in UTF-8          | ^Binary data in UTF-8;       |
 | !         | Booleans                      | !0; !1; !2;                  |
@@ -380,7 +380,7 @@ The token type character is the first character of a token.
 | '         | ASCII text                    | 'ASCII chars;                |
 | "         | UTF-8 text                    | "UTF-8 chars;                |
 | @         | UTC date and time             | @2030-12-31T23:59:59.999;    |
-| $         | ID                            | $obj1;                       |
+| :         | ID                            | :obj1;                       |
 | =         | Copy of another field         | =obj1;                       |
 | &         | Reference to another field    | &obj1;                       |
 | .         | Keys                          | .key1; .column2; .property3; |
@@ -455,13 +455,13 @@ textual representations for binary data:
 Each of these are represented using a different token type character. Here are some example PDL binary field
 tokens:
 
-    :45A6 34E3;
+    $45A6 34E3;
 
     |VGhpcyBpcyBiYXNlNjQgZW5jb2RlZA==;
 
     ^This is binary data in UTF-8 encoding;
 
-The : character is the token type character for binary data encoded using hexadecimal encoding (white spaces allowed between digits).
+The $ character is the token type character for binary data encoded using hexadecimal encoding (white spaces allowed between digits).
 
 The | character is the token type character for binary data encoded using base64 encoding.
 
@@ -584,21 +584,22 @@ date + time in between. Here are all the allowed formats:
 ### ID
 The PDL ID token represents an identifier you can reference via copy or reference field. 
 The PDL ID token does not correspond to a field in PDE. Instead, an ID token represents
-an "address" (offset) that you can reference from a copy or reference field.
+an "address" (offset) that you can reference from a copy or reference field. A bit similar
+to a label in an assembly language program.
 
-The PDL ID token uses the $ character as token type character.
+The PDL ID token uses the : character as token type character.
 
 Here is how a PDL ID token looks:
 
-    $obj1;
+    :obj1;
 
 The ID token points to the PDL field immediately following the ID token. 
 Here is a PDL ID token example:
 
-    $obj1;
+    :obj1;
     { .name; "John Doe; }
 
-In the above example the $obj1; field points to the following PDL object field.
+In the above example the :obj1; field points to the following PDL object field.
 
 See more info in the Copy and Reference fields for how to reference an ID field.
 
@@ -610,7 +611,7 @@ The PDL copy token represents a "copy" of the PDL field immediately following th
 The PDL copy token uses the = character as token type character.
 Here is a PDL copy token example:
 
-    $obj1;
+    :obj1;
     { .name; "John Doe; }
 
     =obj1;
@@ -626,7 +627,7 @@ The PDL reference token represents a "reference" to the PDL field immediately fo
 The PDL reference token uses the & character as token type character.
 Here is a PDL copy token example:
 
-    $obj1;
+    :obj1;
     { .name; "John Doe; }
 
     { .name; "Jane Doe; .spouse;  &obj1; }
@@ -636,7 +637,7 @@ The PDL reference field is useful when you need to encode object graphs where on
 PDL reference fields can also be used to represent cyclic object graphs. 
 Here is an example of a cyclic object graph:
 
-    $obj1;
+    :obj1;
     { .name; "John Doe; 
       .children; [
           { .name; "Phillis Doe; .parent;  &obj1; }
