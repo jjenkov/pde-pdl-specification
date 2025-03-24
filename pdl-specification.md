@@ -366,31 +366,32 @@ More info will be added when this work has been carried out.
 Here is a shorthand list of the token type characters used for different token types.
 The token type character is the first character of a token.
 
-| Character | Token Type                    | Token Examples               |
-|-----------|-------------------------------|------------------------------|
-| #         | Comments                      | #This is a comment;          |
-| $         | Binary data in hexadecimal    | $123A 44E3;                  |
-| \|        | Binary data in base64         | \|QmFzZTY0IGRhdGE=;          |
-| ^         | Binary data in UTF-8          | ^Binary data in UTF-8;       |
-| !         | Booleans                      | !0; !1; !2;                  |
-| +         | Positive integers             | +123;                        |
-| -         | Negative integers             | -123;                        |
-| %         | 32-bit floating point numbers | %123.45; %-123.45;           |
-| /         | 64-bit floating point numbers | /567.89; /-567.89;           |
-| '         | ASCII text                    | 'ASCII chars;                |
-| "         | UTF-8 text                    | "UTF-8 chars;                |
-| @         | UTC date and time             | @2030-12-31T23:59:59.999;    |
-| :         | ID                            | :obj1;                       |
-| =         | Copy of another field         | =obj1;                       |
-| &         | Reference to another field    | &obj1;                       |
-| .         | Keys                          | .key1; .column2; .property3; |
-| {         | Object begin                  | {; {                         |
-| }         | Object end                    | }; }                         |
-| [         | Table begin                   | [; [                         |
-| ]         | Table end                     | ]; ]                         |
-| <         | Metadata begin                | <; <                         |
-| \>        | Metadata end                  | \>; >                        |
-| *         | Named tokens                  | *id(+123;) *ref(+123;)       |
+| Character | Token Type                    | Token Examples                   |
+|-----------|-------------------------------|----------------------------------|
+| #         | Single-token comments         | #This is a single-token comment; |
+| *         | Multi-token comments          | *This is a multi-token comment~  |
+| $         | Binary data in hexadecimal    | $123A 44E3;                      |
+| \|        | Binary data in base64         | \|QmFzZTY0IGRhdGE=;              |
+| ^         | Binary data in UTF-8          | ^Binary data in UTF-8;           |
+| !         | Booleans                      | !0; !1; !2;                      |
+| +         | Positive integers             | +123;                            |
+| -         | Negative integers             | -123;                            |
+| %         | 32-bit floating point numbers | %123.45; %-123.45;               |
+| /         | 64-bit floating point numbers | /567.89; /-567.89;               |
+| '         | ASCII text                    | 'ASCII chars;                    |
+| "         | UTF-8 text                    | "UTF-8 chars;                    |
+| @         | UTC date and time             | @2030-12-31T23:59:59.999;        |
+| :         | ID                            | :obj1;                           |
+| =         | Copy of another field         | =obj1;                           |
+| &         | Reference to another field    | &obj1;                           |
+| .         | Keys                          | .key1; .column2; .property3;     |
+| {         | Object begin                  | {; {                             |
+| }         | Object end                    | }; }                             |
+| [         | Table begin                   | [; [                             |
+| ]         | Table end                     | ]; ]                             |
+| <         | Metadata begin                | <; <                             |
+| \>        | Metadata end                  | \>; >                            |
+| *         | Named tokens                  | *id(+123;) *ref(+123;)           |
 
 
 ## Token Types
@@ -407,13 +408,42 @@ have in JSON or XML.
 Comment tokens are intended for inserting comments into the PDL documents. YAML and XML has comments, but JSON 
 and CSV does not have a standard comment format. Comments are useful e.g. in test data documents and in configuration files.
 
-A PDL comment token would look like this:
+PDL has two types of comments:
+
+- Single-token comments.
+- Multi-token comments.
+
+Single-token comments use the # character as type character.
+
+Multi-token comments use the * character as type character.
+
+A PDL single-token comment token would look like this:
 
     #This is a comment;
 
-One disadvantage of this comment format is, if you need to comment out a section of PDL tokens. Since the comment
-token has the same end marker character as many other tokens, you will end up having to comment out each token
-by itself, like this: 
+Single-token comments can be inserted anywhere between other PDL tokens - but not inside another token.
+
+Single-token comments make it easy to comment out a single PDL token too. Here is an example:
+
+    "This is a text;  #"This is also a text;  "This is one more text;
+
+Notice how the middle UTF-8 token is commented out by placing a # character in front of that token.
+This is possible because the single-comment token and the UTF-8 token both end with a semi-colon.
+
+If the token you want to comment out does not end with a semi-colon, you also need to put a semi-colon 
+after the token. Here is an example:
+
+    #{; 
+
+A PDL single-token comment can actually span multiple lines. Here is an example:
+
+    #This is a 
+     single-token comment
+     that spans multiple lines;
+
+
+In case you need to comment out multiple PDL tokens it can be annoying to have to explicitly comment out
+every one of them individually - as shown in this example:
 
     #This is a single-token comment;
 
@@ -422,26 +452,25 @@ by itself, like this:
     #"This is a text;
 
 Notice how each of the tokens below the first comment token must be commented out individually, since each of them
-ends with a ; which marks the end of a comment token too. This is annoying - but something an editor would be able
-to handle more easily for you.
+ends with a ; which marks the end of a comment token too. This is annoying.
 
-I guess that in some situations it can also make it easier to comment out a single token in the middle of a line,
-because you just have to put a # character in front of that token and it becomes a comment.
+To solve this problem PDL also has multi-token comments. A multi-token comment uses the * as type character, 
+and the ~ character as end marker character. Here is an example of a multi-token comment:
 
-Alternatively, comments could use a different end character in POS1 and POS2 than other tokens. For instance,
-the ~ character - which is not often used in other tokens (except occasionally in ASCII or UTF-8 tokens).
-This way you could more easily comment out a larger section of PDL tokens - but commenting out a single PDL
-token then requires more work - as it has to be surrounded by a # and ~ character, instead of just having
-a # character put in front of it.
+    *This is a multi-token comment~
 
-Maybe there needs to be single token comments and a multi-token comments... That is an option
-to look at in the future.
+This multi-token comment actually only consists of a single token. In fact, multi-token comments are all
+only one token. The name comes from their ability to comment out multiple tokens more easily. 
+Here is a multi-token comment example:
 
-Regardless of this syntax "disadvantage" - it is better to have comments available than not having comments
-available at all like in JSON. Also, having the comment syntax conform to the general token syntax structure
-makes a tokenizer much easier to implement.
+    *This is a multi-token comment
+    +123; 
+    /789.00;
+    "This is a text;
+    ~
 
-Comments cannot have null values.
+While the above is actually still only a single PDL token - it comments out multiple tokens. It can do so because
+it does not use the same end marker character as any other token in PDL.
 
 
 ### Binary
