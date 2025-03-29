@@ -531,19 +531,14 @@ three examples showing a null, true and false boolean PDL token (field):
 
     !0;    
     !1;
-    !2;
 
 The ! character is the token type character for boolean tokens (fields). The value 0 represents a boolean field
-with the value null. The value 1 represents a boolean field with the value true. The 2 represents a boolean field
-with the value false.
+with the value false. The value 1 represents a boolean field with the value true. 
 
 
 ### Integers
 A PDL integer token represents an integer PDL field. Integers can have either null, positive or negative integer values.
 
-A null integer value is represented like this:
-
-    +;
 
 Notice the + marking a positive integer value - immediately followed by the ; character, signaling that this integer
 value is empty (null).
@@ -567,12 +562,6 @@ A PDL floating point token represents a floating point number. PDL enables you t
 floating point numbers. The 32 bit floating point tokens use the % character as type character. 
 The 64-bit floating point tokens use the / character as type character. 
 
-Representing a null floating point character is done using either the % or / character, followed directly by a semi-colon.
-Here are two examples of how a null floating point token could look;
-
-    %;
-    /;
-
 Here are some example 32 bit floating point tokens:
 
     %123.45;
@@ -591,10 +580,6 @@ parse each character as an UTF-8 character.
 
 The ASCII PDL token uses the ' character as token type character.
 
-Representing a null ASCII PDL token looks like this:
-
-    ';
-
 Notice how the ' character is immediately followed by the ; character.
 
 Representing a PDL ASCII text token looks like this:
@@ -609,10 +594,6 @@ that a string of text is UTF-8 characters (possibly more than 1 byte per charact
 parse each character as an UTF-8 character.
 
 The UTF-8 PDL token uses the " character as token type character.
-
-Representing a null UTF-8 PDL token looks like this:
-
-    ";
 
 Notice how the " character is immediately followed by the ; character.
 
