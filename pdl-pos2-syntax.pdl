@@ -7,35 +7,35 @@
  123; /456.67; "A UTF-8 token;
  ~
 
-!1;
+!1;                             # Boolean field with value true;
 
-123;
--123;
+123;                            # Positive integer field;
+-123;                           # Negative integer field;
 
-%123.45;
-/123.456789;
+%123.45;                        # 32 bit floating point field;
+/123.456789;                    # 64 bit floating point field;
 
-'ASCII token;
-"UTF-8 token;
+'ASCII token;                   # ASCII characters only field;
+"UTF-8 token;                   # UTF-8 characters field;
 
-@2030-12-31T23:59:59.999;
+@2030-12-31T23:59:59.999;       # UTC field;
 
-:obj1;
-=obj1;
-&obj1;
+:obj1;                          # ID field;
+=obj1;                          # Copy field;
+&obj1;                          # Reference field;
 
-.key;
+.key;                           # Key field;
 
-{ .name; "John Doe; }
+{ .name; "John Doe; }           # Object field with nested key and UTF-8 fields;
 
-[ .name;
+[ .name;                        # Table field with 1 nested column - named via the key field;
   "John Doe;
   "Alice Wonderly;
   "Henrietta Hanson;
 ]
 
-< .type; "Customer; >
+< .type; "Customer; >           # Metadata field with a nested key and UTF-8 field;
 
-someToken(123;)
+someToken(123;)                 # A named token. Currently not used for anything specific;
 
 
