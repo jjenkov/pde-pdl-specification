@@ -1,0 +1,41 @@
+#This file contains examples of all PDL data structures using the POS2 syntax
+ which will most likely be the suggested, final PDL syntax;
+
+#This is single token comment;
+
+*This is a multi-token commen where other tokens can be nested inside because it does not end with a ; character.
+ 123; /456.67; "A UTF-8 token;
+ ~
+
+!1;
+
+123;
+-123;
+
+%123.45;
+/123.456789;
+
+'ASCII token;
+"UTF-8 token;
+
+@2030-12-31T23:59:59.999;
+
+:obj1;
+=obj1;
+&obj1;
+
+.key;
+
+{ .name; "John Doe; }
+
+[ .name;
+  "John Doe;
+  "Alice Wonderly;
+  "Henrietta Hanson;
+]
+
+< .type; "Customer; >
+
+someToken(123;)
+
+
